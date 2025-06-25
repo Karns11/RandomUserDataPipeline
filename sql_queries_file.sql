@@ -1,5 +1,5 @@
---Some queries were created with some insiration from DataLemur. I have spent tons of time on that website practicing SQL skills, and wanted to replicate some of those questions here.
---Most queries were created with the intention of using a cte or window function.
+--Some queries were created with some inspiration from DataLemur. I have spent tons of time on that website practicing SQL skills, and wanted to replicate some of those questions here.
+--Most queries were created with the intention of using a cte or window function, bui not all.
 
 -- 1. Return users (all fields) who have an actual age or predicted age (from agify) that is above the average for the users actual country fpr the entire dataset.
 WITH country_avg_age AS (
