@@ -2,7 +2,7 @@
 
 ### Objective
 
-Create a python application that extracts at least 200 records from the RandomUser API, and then use an additional API to infer more information about the names obtained from the RandomUser API. Afte that, use SQL to perform 5 or more queries on the dataset that might yield interesting results.
+Create a Python application that extracts at least 200 records from the RandomUser API, and then use at least one additional API to infer more information about the names obtained from the RandomUser API. After that, use SQL to perform 5 or more queries on the dataset that might yield interesting results.
 
 ### How to run
 
@@ -15,8 +15,8 @@ Create a python application that extracts at least 200 records from the RandomUs
    git clone https://github.com/Karns11/RandomUserDataPipeline.git
    cd RandomUserDataPipeline
    ```
-2. Create/activate a python virtual environment
-   I always prefer to work within venvs when using python so I will add this as a step here:
+2. Create/activate a Python virtual environment
+   I always prefer to work within venvs when using Python so I will add this as a step here:
 
    ```powershell
     python -m venv .venv
@@ -35,19 +35,19 @@ Create a python application that extracts at least 200 records from the RandomUs
     Pip install requests pandas
    ```
 4. Run the application
-   The main python file is already provied in the repository: "users_data_loader.py"
+   The main Python file is already provided in the repository: "users_data_loader.py"
    To run the application:
    ```powershell
     python users_data_loader.py
    ```
-   NOTE: this application was designed to be run once per day in order to utilize the free tier of the enriching APIs. If you would like to run the application, but with a smaller output, you can pass an argument when running the application to determine how many member syou would like to be included in each group that is sent to the additional APIs.
+   NOTE: this application was designed to be run once per day in order to utilize the free tier of the enriching APIs. If you would like to run the application, but with a smaller output, you can pass an argument when running the application to determine how many members you would like to be included in each group that is sent to the additional APIs.
    For example, you can run the following to command to run the program and include 50 users in each group. Since there are 3 additional APIs, the output will be 150 enriched users being saved to the database. This is a great feature to use when developing. The default is 100, which results in 300 enriched users being saved to the database to meet the 200 minimum requirement.
    ```powershell
     python users_data_loader.py 50
    ```
 5. Expected Outcome
-   Sqlite will create a users.db file in the project directory
-   The enriched dataset will be stored in a Sqlite table named "users_names_data"
+   SQLite will create a users.db file in the project directory
+   The enriched dataset will be stored in a SQLite table named "users_names_data"
    Terminal output will confirm successful API calls and data storage
    API rate limits are respected in the logic, however if the application is run more than once per day, you will experience rate limiting.
 
@@ -55,25 +55,25 @@ Continue below for a detailed walkthrough of my solution and my thought process 
 
 ### Solution Summary
 
-The application begins by imprting the required libraries, which in this case are: requests, pandas, sqlite3, and sys. I decided to use sqlite to store the data in preparation for the sql analysis portion of the assesment, since it is a very nice lighweight database solution that comes with python, and we are not working with a large dataset by any means. It also integrates really nice with DBeaver, which I already have installed on my machine. I also decided to use pandas for any data manipulation and cleaning that I will complete in this project, since I have a great deal of experience with pandas. The requests library obviously will be very helpful when making API calls to the different end points, and sys will be used to stop the application if I run into certian situations.
+The application begins by importing the required libraries, which in this case are: requests, pandas, SQLite3, and sys. I decided to use SQLite to store the data in preparation for the sql analysis portion of the assessment , since it is a very nice lightweight database solution that comes with Python, and we are not working with a large dataset by any means. It also integrates really nice with DBeaver, which I already have installed on my machine. I also decided to use pandas for any data manipulation and cleaning that I will complete in this project, since I have a great deal of experience with pandas. The requests library obviously will be very helpful when making API calls to the different end points, and sys will be used to stop the application if I run into certian situations.
 
 ```python
 # import required libraries
 import requests
 import pandas as pd
-import sqlite3
+import SQLite3
 import sys
 ```
 
-Directly after importing the libraries, I set up my connection to the sqlite database and create the cursor, like so:
+Directly after importing the libraries, I set up my connection to the SQLite database and create the cursor, like so:
 
 ```python
-# initialize sqlite connection to a new users database, and create cursor
-con = sqlite3.connect('users.db')
+# initialize SQLite connection to a new users database, and create cursor
+con = SQLite3.connect('users.db')
 cur = con.cursor()
 ```
 
-Then, the application retrieves exactly 300 random users from the RandomUser API. To make the API calls, I will use python's request librarywhich makes the process super easy. Here, I will use the requsts.get() method to make the get request, I will then use the response to check the status code. if the status code is 200, then I will be good to go ahead and parse the data, and obtain the results. If the response is not a 200, then there is no need to continue on with the rest of the application. Therefore, I will print the status code, and exit the program.
+Then, the application retrieves exactly 300 random users from the RandomUser API. To make the API calls, I will use Python's request librarywhich makes the process super easy. Here, I will use the requests.get() method to make the get request, I will then use the response to check the status code. if the status code is 200, then I will be good to go ahead and parse the data, and obtain the results. If the response is not a 200, then there is no need to continue on with the rest of the application. Therefore, I will print the status code, and exit the program.
 
 ```python
 # make get request to random user api
@@ -118,13 +118,13 @@ for user in json_results:
     flattened_users_dataset.append(flattened_user)
 ```
 
-Next, now that I have one list containing 300 user dictionaries, before converting to a pandas dataframe, I will slice the list into 3 separate lists of 100. This will allow me to utilize the additional APIs that are required for this assesment. Since each of the additional APIs have a free tier that only allows you to make up to 100 calls a day, I will send the 100 first names from the first list to the agify API, the 100 first names from the second list to the genderize API, and the 100 last names from the third list to the nationalize API. This will make sure that every record has been enriched while making sure that I utilize as much of the free tiers for each additional API that I possibly can.
+Next, now that I have one list containing 300 user dictionaries, before converting to a pandas dataframe, I will slice the list into 3 separate lists of 100. This will allow me to utilize the additional APIs that are required for this assessment . Since each of the additional APIs have a free tier that only allows you to make up to 100 calls a day, I will send the 100 first names from the first list to the agify API, the 100 first names from the second list to the genderize API, and the 100 last names from the third list to the nationalize API. This will make sure that every record has been enriched while making sure that I utilize as much of the free tiers for each additional API that I possibly can.
 
 It would also be valid to use a completely different api with a more generous free tier, but I think it will be interesting to solve the problem this way, and showcase my ability to make multiple different API calls in order to enrich the dataset.
 
-Here, you can see that I am looping through each user in each dataset, using an f string to pass the name as a paramter to the api endpoint, parsing the json if a successful response, adding 3 flags along with the target datapoint to the current user, and then finally appending that enriched user to a new list.
+Here, you can see that I am looping through each user in each dataset, using an f string to pass the name as a parameter to the api endpoint, parsing the json if a successful response, adding 3 flags along with the target datapoint to the current user, and then finally appending that enriched user to a new list.
 
-An interesting note is as follows: If I receive any non-200 response, then my application will print the status code received, and break out of the loop. If the non-200 response is a 429 response, that means the application reached the rate limit, and it should not make any additional calls. If there were any sucessful responses, then that data will have been appened to the respective list, and the program will carry on.
+An interesting note is as follows: If I receive any non-200 response, then my application will print the status code received, and break out of the loop. If the non-200 response is a 429 response, that means the application reached the rate limit, and it should not make any additional calls. If there were any successful responses, then that data will have been appended to the respective list, and the program will carry on.
 
 I think this is the best way to solve the not-so-generous free tier while still being able to utilize the 3 additional APIs to enrich the data.
 
@@ -224,19 +224,19 @@ for user in users_dataset_send_to_nationalize:
 enriched_nationalize_users_df = pd.DataFrame(enriched_nationalize_dataset)
 ```
 
-The next step my application takes is to union the 3 resulting lists together into one pandas data frame. You might've noticed above, that I added 3 additional fields in addition to the target datapoint for each individual list. That was in preparation for this step. I wanted to make sure 1) that every dataset has the same number of fields before unioning (even though the concat method handles that nicely) and 2) that these flags exists in order to make it easier to isolate the users that were within each group when completing downstream abalysis.
+The next step my application takes is to union the 3 resulting lists together into one pandas data frame. You might've noticed above, that I added 3 additional fields in addition to the target datapoint for each individual list. That was in preparation for this step. I wanted to make sure 1) that every dataset has the same number of fields before unioning (even though the concat method handles that nicely) and 2) that these flags exist in order to make it easier to isolate the users that were within each group when completing downstream analysis.
 
 I faced the decision of keeping the 3 data frames separate and then loading each of them as their own table into the database, but I decided against that because 1) that really wouldn't make too much sense and 2) it is really simple to union different data frames together using pandas:
 
 ```python
-# use pandas concat method to union all 3 dataframes togther in preparation of savings to table in sqlite database.
+# use pandas concat method to union all 3 dataframes together in preparation of savings to table in SQLite database.
 final_users_df = pd.concat([enriched_agify_users_df, enriched_genderize_users_df, enriched_nationalize_users_df], ignore_index=True)
 ```
 
-Next, I made sure to create the table in the database in advance before saving the data frame to the table. I prefer doing this before hand because I prefer to have full control over the data types, rather than having pandas determine that when loading. So, here is my DDL for that:
+Next, I made sure to create the table in the database in advance before saving the data frame to the table. I prefer doing this beforehand because I prefer to have full control over the data types, rather than having pandas determine that when loading. So, here is my DDL for that:
 
 ```python
-# Create table in sqlite database if it doesn't already exist
+# Create table in SQLite database if it doesn't already exist
 cur.execute("""
 CREATE TABLE IF NOT EXISTS users_names_data (
     first_name TEXT,
@@ -270,7 +270,7 @@ con.commit()
 
 Lastly, I perform some slight data cleaning before saving the data to the table in the database. In the following code, I first check to make sure that the data frame exists and that there is data within it. If the data frame does not exist or is empty, that means there were issues with the additional APIs and the data should not be saved to the database unless it has been enriched with the additional APIs first.
 
-If the data frame does exist and there is data within it, I make sure to convert the birth_date field to a date, rather than a datetime, using pandas, and then replace the data in the database with the new records. I figured this method would be acceptable for this use case since the main objective is to view python and sql analysis skills. However, a perfectly acceptable alternative would be to add a "processdate" field to the dataset here, and then append the data rather than replace it. that will allow the user of the data to isolate users that were loaded on a certain date, for example. In a production system, that might be a good idea.
+If the data frame does exist and there is data within it, I make sure to convert the birth_date field to a date, rather than a datetime, using pandas, and then replace the data in the database with the new records. I figured this method would be acceptable for this use case since the main objective is to view Python and sql analysis skills. However, a perfectly acceptable alternative would be to add a "processdate" field to the dataset here, and then append the data rather than replace it. that will allow the user of the data to isolate users that were loaded on a certain date, for example. In a production system, that might be a good idea.
 
 ```python
 # slight data cleaning - store birthdate field as date and save dataframe to database
