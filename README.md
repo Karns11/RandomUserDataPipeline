@@ -4,9 +4,34 @@
 
 Create a python application that extracts at least 200 records from the RandomUser API, and then use an additional API to infer more information about the names obtained from the RandomUser API. Afte that, use SQL to perform 5 or more queries on the dataset that might yield interesting results.
 
+### How to run
+
+1. Project Setup
+   Open Powershell (or any terminal) and create a project directory.
+
+Continue below for a detailed walkthrough of my solution and my thought process behind some of the decisions I made.
+
 ### Solution Summary
 
-The application begins by retrieving exactly 300 random users from the RandomUser API. To make the API calls, I will use python's request librarywhich makes the process super easy. Here, I will use the requsts.get() method to make the get request, I will then use the response to check the status code. if the status code is 200, then I will be good to go ahead and parse the data, and obtain the results. If the response is not a 200, then there is no need to continue on with the rest of the application. Therefore, I will print the status code, and exit the program.
+The application begins by imprting the required libraries, which in this case are: requests, pandas, sqlite3, and sys. I decided to use sqlite to store the data in preparation for the sql analysis portion of the assesment, since it is a very nice lighweight database solution that comes with python, and we are not working with a large dataset by any means. It also integrates really nice with DBeaver, which I already have installed on my machine. I also decided to use pandas for any data manipulation and cleaning that I will complete in this project, since I have a great deal of experience with pandas. The requests library obviously will be very helpful when making API calls to the different end points, and sys will be used to stop the application if I run into certian situations.
+
+```python
+# import required libraries
+import requests
+import pandas as pd
+import sqlite3
+import sys
+```
+
+Directly after importing the libraries, I set up my connection to the sqlite database and create the cursor, like so:
+
+```python
+# initialize sqlite connection to a new users database, and create cursor
+con = sqlite3.connect('users.db')
+cur = con.cursor()
+```
+
+Then, the application retrieves exactly 300 random users from the RandomUser API. To make the API calls, I will use python's request librarywhich makes the process super easy. Here, I will use the requsts.get() method to make the get request, I will then use the response to check the status code. if the status code is 200, then I will be good to go ahead and parse the data, and obtain the results. If the response is not a 200, then there is no need to continue on with the rest of the application. Therefore, I will print the status code, and exit the program.
 
 ```python
 # make get request to random user api
