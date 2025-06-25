@@ -6,6 +6,8 @@ Libraries used:
     -requests
     -pandas
     -sqlite3 
+    -sys
+    -time
 
 -Import required libraries
 -Set up sqlite database connection
@@ -30,6 +32,7 @@ import requests
 import pandas as pd
 import sqlite3
 import sys
+import time
 
 # Get parameter from command line, default to 100 and it cannot be more than 100
 if len(sys.argv) > 1:
@@ -117,6 +120,7 @@ for user in users_dataset_send_to_agify:
         if agify_response.status_code == 429:
             print(f"You've been rate limited. You can try again in {agify_reset_timer} seconds\n")
             break
+    time.sleep(0.5)
 
 #convert agify dataset to pandas dataframe
 enriched_agify_users_df = pd.DataFrame(enriched_agify_dataset)
@@ -144,6 +148,7 @@ for user in users_dataset_send_to_genderize:
         if genderize_response.status_code == 429:
             print(f"You've been rate limited. You can try again in {genderize_reset_timer} seconds\n")
             break
+    time.sleep(0.5)
 
 #convert genderize dataset to pandas dataframe
 enriched_genderize_users_df = pd.DataFrame(enriched_genderize_dataset)
@@ -178,6 +183,7 @@ for user in users_dataset_send_to_nationalize:
         if nationalize_response.status_code == 429:
             print(f"You've been rate limited. You can try again in {nationalize_reset_timer} seconds\n")
             break
+    time.sleep(0.5)
 
 #convert nationalize dataset to pandas dataframe
 enriched_nationalize_users_df = pd.DataFrame(enriched_nationalize_dataset)

@@ -71,7 +71,7 @@ Continue below for a detailed walkthrough of my solution and my thought process 
 
 ### Solution Summary
 
-The application begins by importing the required libraries, which in this case are: requests, pandas, SQLite3, and sys. I decided to use SQLite to store the data in preparation for the sql analysis portion of the assessment , since it is a very nice lightweight database solution that comes with Python, and we are not working with a large dataset by any means. It also integrates really nice with DBeaver, which I already have installed on my machine. I also decided to use pandas for any data manipulation and cleaning that I will complete in this project, since I have a great deal of experience with pandas. The requests library obviously will be very helpful when making API calls to the different end points, and sys will be used to stop the application if I run into certian situations.
+The application begins by importing the required libraries, which in this case are: requests, pandas, SQLite3, and sys. I decided to use SQLite to store the data in preparation for the sql analysis portion of the assessment , since it is a very nice lightweight database solution that comes with Python, and we are not working with a large dataset by any means. It also integrates really nice with DBeaver, which I already have installed on my machine. I also decided to use pandas for any data manipulation and cleaning that I will complete in this project, since I have a great deal of experience with pandas. The requests library obviously will be very helpful when making API calls to the different end points, sys will be used to stop the application if I run into certian situations, and time will be used to create delays when looping through datasets and making calls to the 3 additional APIs.
 
 Also, I added the functionaily to pass an optional parameter when running the application, so below where I import the libraries is the logic to assign the argument to a variable to be used for slicing the data into the 3 groups.
 
@@ -81,6 +81,7 @@ import requests
 import pandas as pd
 import SQLite3
 import sys
+import time
 
 # Get parameter from command line, default to 100 and it cannot be more than 100
 if len(sys.argv) > 1:
@@ -152,7 +153,7 @@ It would also be valid to use a completely different api with a more generous fr
 
 Here, you can see that I am looping through each user in each dataset, using an f string to pass the name as a parameter to the api endpoint, parsing the json if a successful response, adding 3 flags along with the target datapoint to the current user, and then finally appending that enriched user to a new list.
 
-An interesting note is as follows: If I receive any non-200 response, then my application will print the status code received, and break out of the loop. If the non-200 response is a 429 response, that means the application reached the rate limit, and it should not make any additional calls. If there were any successful responses, then that data will have been appended to the respective list, and the program will carry on.
+An interesting note is as follows: If I receive any non-200 response, then my application will print the status code received, and break out of the loop. If the non-200 response is a 429 response, that means the application reached the rate limit, and it should not make any additional calls. If there were any successful responses, then that data will have been appended to the respective list, and the program will carry on. Also note the small delay after each loop to be nice to the api.
 
 I think this is the best way to solve the not-so-generous free tier while still being able to utilize the 3 additional APIs to enrich the data.
 
@@ -186,6 +187,7 @@ for user in users_dataset_send_to_agify:
         if agify_response.status_code == 429:
             print(f"You've been rate limited. You can try again in {agify_reset_timer} seconds\n")
             break
+    time.sleep(0.5)
 
 #convert agify dataset to pandas dataframe
 enriched_agify_users_df = pd.DataFrame(enriched_agify_dataset)
@@ -213,6 +215,7 @@ for user in users_dataset_send_to_genderize:
         if genderize_response.status_code == 429:
             print(f"You've been rate limited. You can try again in {genderize_reset_timer} seconds\n")
             break
+    time.sleep(0.5)
 
 #convert genderize dataset to pandas dataframe
 enriched_genderize_users_df = pd.DataFrame(enriched_genderize_dataset)
@@ -247,6 +250,7 @@ for user in users_dataset_send_to_nationalize:
         if nationalize_response.status_code == 429:
             print(f"You've been rate limited. You can try again in {nationalize_reset_timer} seconds\n")
             break
+    time.sleep(0.5)
 
 #convert nationalize dataset to pandas dataframe
 enriched_nationalize_users_df = pd.DataFrame(enriched_nationalize_dataset)
