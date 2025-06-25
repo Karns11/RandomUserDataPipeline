@@ -89,7 +89,7 @@ for user in json_results:
     flattened_users_dataset.append(flattened_user)
 
 
-# split flattened data set into 3 groups of 100 to be used with additional apis
+# split flattened data set into 3 groups of 100 or whatever the argument passed is, to be used with additional apis
 users_dataset_send_to_agify = flattened_users_dataset[:num_users_in_each_group]
 users_dataset_send_to_genderize = flattened_users_dataset[num_users_in_each_group:num_users_in_each_group*2]
 users_dataset_send_to_nationalize = flattened_users_dataset[num_users_in_each_group*2:num_users_in_each_group*3]

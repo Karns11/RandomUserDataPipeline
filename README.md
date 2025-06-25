@@ -73,12 +73,24 @@ Continue below for a detailed walkthrough of my solution and my thought process 
 
 The application begins by importing the required libraries, which in this case are: requests, pandas, SQLite3, and sys. I decided to use SQLite to store the data in preparation for the sql analysis portion of the assessment , since it is a very nice lightweight database solution that comes with Python, and we are not working with a large dataset by any means. It also integrates really nice with DBeaver, which I already have installed on my machine. I also decided to use pandas for any data manipulation and cleaning that I will complete in this project, since I have a great deal of experience with pandas. The requests library obviously will be very helpful when making API calls to the different end points, and sys will be used to stop the application if I run into certian situations.
 
+Also, I added the functionaily to pass an optional parameter when running the application, so below where I import the libraries is the logic to assign the argument to a variable to be used for slicing the data into the 3 groups.
+
 ```python
 # import required libraries
 import requests
 import pandas as pd
 import SQLite3
 import sys
+
+# Get parameter from command line, default to 100 and it cannot be more than 100
+if len(sys.argv) > 1:
+    int_argument = int(sys.argv[1])
+    if int_argument > 100:
+        num_users_in_each_group = 100
+    else:
+        num_users_in_each_group = int_argument
+else:
+    num_users_in_each_group = 100
 ```
 
 Directly after importing the libraries, I set up my connection to the SQLite database and create the cursor, like so:
@@ -146,10 +158,10 @@ I think this is the best way to solve the not-so-generous free tier while still 
 
 ```python
 
-# split flattened data set into 3 groups of 100 to be used with additional apis
-users_dataset_send_to_agify = flattened_users_dataset[:100]
-users_dataset_send_to_genderize = flattened_users_dataset[100:200]
-users_dataset_send_to_nationalize = flattened_users_dataset[200:300]
+# split flattened data set into 3 groups of 100 or whatever the argument passed is, to be used with additional apis
+users_dataset_send_to_agify = flattened_users_dataset[:num_users_in_each_group]
+users_dataset_send_to_genderize = flattened_users_dataset[num_users_in_each_group:num_users_in_each_group*2]
+users_dataset_send_to_nationalize = flattened_users_dataset[num_users_in_each_group*2:num_users_in_each_group*3]
 
 
 # send first group of 100 names to agify api, then create flags to be used for seamless unioning later on
