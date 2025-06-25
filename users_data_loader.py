@@ -84,9 +84,9 @@ for user in json_results:
 
 
 # split flattened data set into 3 groups of 100 to be used with additional apis
-users_dataset_send_to_agify = flattened_users_dataset[:20] #[:100]
-users_dataset_send_to_genderize = flattened_users_dataset[20:40] #[100:200]
-users_dataset_send_to_nationalize = flattened_users_dataset[40:60] #[200:300]
+users_dataset_send_to_agify = flattened_users_dataset[:100]
+users_dataset_send_to_genderize = flattened_users_dataset[100:200]
+users_dataset_send_to_nationalize = flattened_users_dataset[200:300]
 
 
 # send first group of 100 names to agify api, then create flags to be used for seamless unioning later on
