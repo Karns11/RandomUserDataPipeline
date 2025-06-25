@@ -36,7 +36,8 @@ Create a python application that extracts at least 200 records from the RandomUs
    ```
 4. Run the application
    The main python file is already provied in the repository: "users_data_loader.py"
-   To run the pipeline:
+   To run the application:
+   NOTE: this application was designed to be run once per day in order to utilize the free tier of the enriching APIs.
    ```powershell
     python users_data_loader.py
    ```
