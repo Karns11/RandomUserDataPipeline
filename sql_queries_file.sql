@@ -1,3 +1,6 @@
+--Some queries were created with some insiration from DataLemur. I have spent tons of time on that website practicing SQL skills, and wanted to replicate some of those questions here.
+--Most queries were created with the intention of using a cte or window function.
+
 -- 1. Return users (all fields) who have an actual age or predicted age (from agify) that is above the average for the users actual country fpr the entire dataset.
 WITH country_avg_age AS (
 	SELECT 
@@ -84,7 +87,7 @@ FROM add_rank add_rank_cte
 WHERE rank_num = 1
 
 
---NEED TO CHANGE
+
 -- 5. Write a query to return the 2rd highest age (maybe could do predicted age with a full dataset) by nationality
 WITH ranked_age AS (
 	SELECT 
@@ -96,7 +99,7 @@ WITH ranked_age AS (
 
 SELECT
 	ranked_age.nationality,
-	ranked_age.age
+	ranked_age.age AS second_highest_age
 FROM ranked_age ranked_age
 WHERE 1=1
 	AND ranked_age.age_rank = 2

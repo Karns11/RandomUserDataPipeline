@@ -4,7 +4,7 @@
 
 Create a Python application that extracts at least 200 records from the RandomUser API, and then use at least one additional API to infer more information about the names obtained from the RandomUser API. After that, use SQL to perform 5 or more queries on the dataset that might yield interesting results.
 
-### How to run
+### How to run application
 
 1. Project Setup
    Open Powershell (or any terminal) and create a project directory. Then, clone this GitHub repo to your machine:
@@ -45,11 +45,27 @@ Create a Python application that extracts at least 200 records from the RandomUs
    ```powershell
     python users_data_loader.py 50
    ```
-5. Expected Outcome
+5. Expected Application Outcome
    SQLite will create a users.db file in the project directory
    The enriched dataset will be stored in a SQLite table named "users_names_data"
    Terminal output will confirm successful API calls and data storage
    API rate limits are respected in the logic, however if the application is run more than once per day, you will experience rate limiting.
+
+### How to run sql queries
+
+There are a couple of different options when it comes to running the 5 SQL queries on top of the resulting dataset.
+
+The first option is to run the 'five_sql_queries_python_script.py' file that exists in the same project directory. This will run all of the SQL queries I created that I thought yielded interesting results. This script will out put everything in an easy-to-read format in the terminal.
+
+Additionally, if you would like to run the queries in a database management tool, like dbeaver, I included the .sql file that contains the queries as well. These can be ran directly within the tool which provides a more familiar workspace. Here are the steps to install dbeaver and hook it up to the database, if needed:
+
+1. Navigate to https://dbeaver.io/download/ and download the community edition for you machine
+2. Launch the application and install everything that it prompts you to and create a desktop shortcut
+3. Once the applicaiton is open, click on the ‘New Database Connection’ button from the top menu. In the list of databases, select SQLite, then click next
+4. Browse your devce to find the users.db file that was created after running the application to load the data
+5. Test the connection. If drivers are missing, it will prompt you to install them. Once sucessful, click finish
+
+Now, you can open this sql file and run the queries within it! The sql files contain more information like why I chose to create each query, etc.
 
 Continue below for a detailed walkthrough of my solution and my thought process behind some of the decisions I made.
 
