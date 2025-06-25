@@ -1,5 +1,3 @@
-############ IN README, INCLUDE REASON FOR CREATED TABLE DATA TYPES
-
 """
 Python application to obtain a list of random users from the randomuser api, enrich the data by passing the names into 1 of 3 apis in order to 
 predict the age, gender, and nationality of the name, store the data in a sqlite databse in preparation for analytics via sql queries.
@@ -25,8 +23,6 @@ Libraries used:
 -Union 3 groups of data together
 -Create sql table in sqlite database 
 -Perform slight data cleaning, and load data into sqlite table
-
-
 """
 
 # import required libraries
