@@ -53,6 +53,7 @@ random_user_url = "https://randomuser.me/api/"
 random_user_params = {'results': '300'}
 
 # make get request to random user api
+print("Making api call to random users api...")
 random_user_response = requests.get(random_user_url, params = random_user_params)
 
 # If 200 response received, parse json data and obtain results. Else, log response and throw error
@@ -99,6 +100,7 @@ users_dataset_send_to_nationalize = flattened_users_dataset[num_users_in_each_gr
 
 
 # send first group of 100 names to agify api, then create flags to be used for seamless unioning later on
+print("Making api call with first group to agify api...\n")
 enriched_agify_dataset = []
 for user in users_dataset_send_to_agify:
     agify_url = f"https://api.agify.io?name={user['first_name']}"
@@ -127,6 +129,7 @@ enriched_agify_users_df = pd.DataFrame(enriched_agify_dataset)
 
 
 # send second group of 100 names to genderize api, then create flags to be used for seamless unioning later on
+print("Making api call with second group to genderize api...\n")
 enriched_genderize_dataset = []
 for user in users_dataset_send_to_genderize:
     genderize_url = f"https://api.genderize.io?name={user['first_name']}"
@@ -155,6 +158,7 @@ enriched_genderize_users_df = pd.DataFrame(enriched_genderize_dataset)
 
 
 # send third group of 100 names to nationalize api, then create flags to be used for seamless unioning later on
+print("Making api call with third group to nationalize api...\n")
 enriched_nationalize_dataset = []
 for user in users_dataset_send_to_nationalize:
     nationalize_url = f"https://api.nationalize.io/?name={user['last_name']}"
@@ -192,6 +196,7 @@ enriched_nationalize_users_df = pd.DataFrame(enriched_nationalize_dataset)
 # use pandas concat function to union all 3 dataframes togther in preparation of savings to table in sqlite database.
 final_users_df = pd.concat([enriched_agify_users_df, enriched_genderize_users_df, enriched_nationalize_users_df], ignore_index=True)
 
+print(f"Total rows in final_users_df: {len(final_users_df)}\n")
 
 # Create table in sqlite database if it doesn't already exist
 cur.execute("""
