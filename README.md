@@ -7,7 +7,44 @@ Create a python application that extracts at least 200 records from the RandomUs
 ### How to run
 
 1. Project Setup
-   Open Powershell (or any terminal) and create a project directory.
+   Open Powershell (or any terminal) and create a project directory. Then, clone this GitHub repo to your machine:
+   ```powershell
+   cd Documents
+   mkdir random_user_data_pipeline
+   cd random_user_data_pipeline
+   git clone https://github.com/Karns11/RandomUserDataPipeline.git
+   cd RandomUserDataPipeline
+   ```
+2. Create/activate a python virtual environment
+   I always prefer to work within venvs when using python so I will add this as a step here:
+
+   ```powershell
+    python -m venv .venv
+    ./.venv/scripts/activate
+   ```
+
+   Make sure the (.venv) appears so you know the environment is active
+
+3. Install the required libraries
+   Make sure pip is updated:
+   ```powershell
+    python.exe -m pip install --upgrade pip
+   ```
+   Then, install the required dependencies for the application
+   ```powershell
+    Pip install requests pandas
+   ```
+4. Run the application
+   The main python file is already provied in the repository: "users_data_loader.py"
+   To run the pipeline:
+   ```powershell
+    python users_data_loader.py
+   ```
+5. Expected Outcome
+   Sqlite will create a users.db file in the project directory
+   The enriched dataset will be stored in a Sqlite table named "users_names_data"
+   Terminal output will confirm successful API calls and data storage
+   API rate limits are respected in the logic, however if the application is run more than once per day, you will experience rate limiting.
 
 Continue below for a detailed walkthrough of my solution and my thought process behind some of the decisions I made.
 
