@@ -9,6 +9,7 @@ Create a python application that extracts at least 200 records from the RandomUs
 The application begins by retrieving exactly 300 random users from the RandomUser API. To make the API calls, I will use python's request librarywhich makes the process super easy. Here, I will use the requsts.get() method to make the get request, I will then use the response to check the status code. if the status code is 200, then I will be good to go ahead and parse the data, and obtain the results. If the response is not a 200, then there is no need to continue on with the rest of the application. Therefore, I will print the status code, and exit the program.
 
 ```python
+# make get request to random user api
 random_user_response = requests.get(random_user_url, params = random_user_params)
 
 if random_user_response.status_code == 200:
@@ -24,6 +25,7 @@ else:
 Then, once the users list has been obtained, the next step is to flatten the JSON object that is returned into a list of user dictionaries. I also will only keep fields that I think will be relevant for analysis at the end. No need to keep any usernames, passwords, SSNs, etc. To do that, I used the following code:
 
 ```python
+# flatten the json data while retaining only necessary fields
 flattened_users_dataset = []
 for user in json_results:
     flattened_user = {
@@ -49,9 +51,15 @@ for user in json_results:
     flattened_users_dataset.append(flattened_user)
 ```
 
-Next, now that I have one list containing 300 user dictionaries, before converting to a pandas dataframe, I will slice the list into 3 separate lists of 100. This will allow me to utilize the additional APIs that are required for this assesment. Since each of the additional APIs have a free tier that only allows you to make up to 100 calls a day, I will send the 100 first names from the first list to the agify API, the 100 first names from the second list to the genderize API, and the 100 last names from the third list to the nationalize API.
+Next, now that I have one list containing 300 user dictionaries, before converting to a pandas dataframe, I will slice the list into 3 separate lists of 100. This will allow me to utilize the additional APIs that are required for this assesment. Since each of the additional APIs have a free tier that only allows you to make up to 100 calls a day, I will send the 100 first names from the first list to the agify API, the 100 first names from the second list to the genderize API, and the 100 last names from the third list to the nationalize API. This will make sure that every record has been enriched while making sure that I utilize as much of the free tiers for each additional API that I possibly can.
 
-This will make sure that every record has been enriched while maintaining under the threshold for the free tier for each additional API. It would also be valid to use a completely different api with a more generous free tier, but I think it will be interesting to solve the problem this way, and showcase my ability to make multiple different API calls in order to enrich the dataset. So, here is my code for what I just described:
+It would also be valid to use a completely different api with a more generous free tier, but I think it will be interesting to solve the problem this way, and showcase my ability to make multiple different API calls in order to enrich the dataset.
+
+Here, you can see that I am looping through each user in each dataset, using an f string to pass the name as a paramter to the api endpoint, parsing the json if a successful response, adding 3 flags along with the target datapoint to the current user, and then finally appending that enriched user to a new list.
+
+An interesting note is as follows: If I receive any non-200 response, then my application will print the status code received, and break out of the loop. If the non-200 response is a 429 response, that means the application reached the rate limit, and it should not make any additional calls. If there were any sucessful responses, then that data will have been appened to the respective list, and the program will carry on.
+
+I think this is the best way to solve the not-so-generous free tier while still being able to utilize the 3 additional APIs to enrich the data.
 
 ```python
 
@@ -147,5 +155,65 @@ for user in users_dataset_send_to_nationalize:
 
 #convert nationalize dataset to pandas dataframe
 enriched_nationalize_users_df = pd.DataFrame(enriched_nationalize_dataset)
+```
 
+The next step my application takes is to union the 3 resulting lists together into one pandas data frame. You might've noticed above, that I added 3 additional fields in addition to the target datapoint for each individual list. That was in preparation for this step. I wanted to make sure 1) that every dataset has the same number of fields before unioning (even though the concat method handles that nicely) and 2) that these flags exists in order to make it easier to isolate the users that were within each group when completing downstream abalysis.
+
+I faced the decision of keeping the 3 data frames separate and then loading each of them as their own table into the database, but I decided against that because 1) that really wouldn't make too much sense and 2) it is really simple to union different data frames together using pandas:
+
+```python
+# use pandas concat method to union all 3 dataframes togther in preparation of savings to table in sqlite database.
+final_users_df = pd.concat([enriched_agify_users_df, enriched_genderize_users_df, enriched_nationalize_users_df], ignore_index=True)
+```
+
+Next, I made sure to create the table in the database in advance before saving the data frame to the table. I prefer doing this before hand because I prefer to have full control over the data types, rather than having pandas determine that when loading. So, here is my DDL for that:
+
+```python
+# Create table in sqlite database if it doesn't already exist
+cur.execute("""
+CREATE TABLE IF NOT EXISTS users_names_data (
+    first_name TEXT,
+    last_name TEXT,
+    title TEXT,
+    gender TEXT,
+    email TEXT,
+    phone TEXT,
+    cell TEXT,
+    nationality TEXT,
+    birth_date TEXT,
+    age INTEGER,
+    address TEXT,
+    city TEXT,
+    state TEXT,
+    country TEXT,
+    postcode TEXT,
+    latitude TEXT,
+    longitude TEXT,
+    agify_predicted_age INTEGER,
+    genderize_predicted_gender TEXT,
+    nationalize_predicted_country TEXT,
+    agified_flag INTEGER,
+    genderized_flag INTEGER,
+    nationalized_flag INTEGER
+)
+""")
+con.commit()
+
+```
+
+Lastly, I perform some slight data cleaning before saving the data to the table in the database. In the following code, I first check to make sure that the data frame exists and that there is data within it. If the data frame does not exist or is empty, that means there were issues with the additional APIs and the data should not be saved to the database unless it has been enriched with the additional APIs first.
+
+If the data frame does exist and there is data within it, I make sure to convert the birth_date field to a date, rather than a datetime, using pandas, and then replace the data in the database with the new records. I figured this method would be acceptable for this use case since the main objective is to view python and sql analysis skills. However, a perfectly acceptable alternative would be to add a "processdate" field to the dataset here, and then append the data rather than replace it. that will allow the user of the data to isolate users that were loaded on a certain date, for example. In a production system, that might be a good idea.
+
+```python
+# slight data cleaning - store birthdate field as date and save dataframe to database
+if final_users_df is not None and not final_users_df.empty:
+    final_users_df['birth_date'] = pd.to_datetime(final_users_df['birth_date']).dt.date
+
+    # always overwrite the raw DataFrame to a table called 'users_names_data'
+    final_users_df.to_sql('users_names_data', con, if_exists='replace', index=False)
+
+    print("Saved data frame successfully to db.")
+else:
+    print("Data frame is empty. Unable to save to db.")
 ```
