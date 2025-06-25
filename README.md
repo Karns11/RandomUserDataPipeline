@@ -37,9 +37,13 @@ Create a python application that extracts at least 200 records from the RandomUs
 4. Run the application
    The main python file is already provied in the repository: "users_data_loader.py"
    To run the application:
-   NOTE: this application was designed to be run once per day in order to utilize the free tier of the enriching APIs.
    ```powershell
     python users_data_loader.py
+   ```
+   NOTE: this application was designed to be run once per day in order to utilize the free tier of the enriching APIs. If you would like to run the application, but with a smaller output, you can pass an argument when running the application to determine how many member syou would like to be included in each group that is sent to the additional APIs.
+   For example, you can run the following to command to run the program and include 50 users in each group. Since there are 3 additional APIs, the output will be 150 enriched users being saved to the database. This is a great feature to use when developing. The default is 100, which results in 300 enriched users being saved to the database to meet the 200 minimum requirement.
+   ```powershell
+    python users_data_loader.py 50
    ```
 5. Expected Outcome
    Sqlite will create a users.db file in the project directory

@@ -31,6 +31,16 @@ import pandas as pd
 import sqlite3
 import sys
 
+# Get parameter from command line, default to 100 and it cannot be more than 100
+if len(sys.argv) > 1:
+    int_argument = int(sys.argv[1])
+    if int_argument > 100:
+        num_users_in_each_group = 100
+    else:
+        num_users_in_each_group = int_argument
+else:
+    num_users_in_each_group = 100
+
 # initialize sqlite connection to a new users database, and create cursor
 con = sqlite3.connect('users.db')
 cur = con.cursor()
@@ -80,9 +90,9 @@ for user in json_results:
 
 
 # split flattened data set into 3 groups of 100 to be used with additional apis
-users_dataset_send_to_agify = flattened_users_dataset[:100]
-users_dataset_send_to_genderize = flattened_users_dataset[100:200]
-users_dataset_send_to_nationalize = flattened_users_dataset[200:300]
+users_dataset_send_to_agify = flattened_users_dataset[:num_users_in_each_group]
+users_dataset_send_to_genderize = flattened_users_dataset[num_users_in_each_group:num_users_in_each_group*2]
+users_dataset_send_to_nationalize = flattened_users_dataset[num_users_in_each_group*2:num_users_in_each_group*3]
 
 
 # send first group of 100 names to agify api, then create flags to be used for seamless unioning later on
