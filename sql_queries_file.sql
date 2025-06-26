@@ -13,7 +13,7 @@
 
 
 
--- 1. Above-Average Age by Country,
+-- 1. Above-Average Age by Country.
 --Why this is interesting: This query highlights users that are outliers in terms of their age compared to the average age for their country.
 --This type of analysis is a common one when it comes to demographic analyses, and I have applied similar logic in real-world projects.
 WITH country_avg_age AS (
@@ -61,7 +61,7 @@ GROUP BY num_distinct_first_names.num_dist_first_names;
 
 
 
--- 3. Predicted VS Actual Gender Comparison
+-- 3. Predicted VS Actual Gender Comparison.
 --Why this is interesting: This query examines the result of the namsor api. I wanted to make sure I include a query that displays an analysis of the namsor api.
 --Here we can see the # of correct and incorrect predictions, along with the prediction accuracy broken out my country
 SELECT
@@ -79,7 +79,7 @@ ORDER BY prediction_accuracy_percent DESC;
 
 
 
--- 4. Most Common Birth Month by Country
+-- 4. Most Common Birth Month by Country.
 --Why this is interesting: Identify patterns in birth month by country. This uses a window function to solve the problem and I provide a couple of different options depending on DMS in use.
 --This is another type of query that I have lots experience with in real-world projects. A common use case for a query like this is marketing campaigns.
 WITH num_birth_months_per_country AS (
@@ -106,7 +106,7 @@ WHERE rank_num = 1;
 
 
 
--- 5. Second highest age by nationality
+-- 5. Second highest age by nationality.
 --Why this is interesting: This type of query demonstrates my advanced SQL knowledge when it comes to ranking logic and window functions. 
 --I have created several similar "runner-up" queries in real-world scenarios, especially when it comes to determining second place results for marketing campaigns.
 WITH ranked_age AS (
