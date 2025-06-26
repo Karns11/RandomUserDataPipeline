@@ -38,15 +38,15 @@ add_avg_age AS (
 )
 
 SELECT 
-	avg_age.first_name,
-	avg_age.last_name,
-	avg_age.gender,
-	avg_age.country,
-	avg_age.age,
-	avg_age.avg_age
-FROM add_avg_age avg_age
+	add_avg_age_cte.first_name,
+	add_avg_age_cte.last_name,
+	add_avg_age_cte.gender,
+	add_avg_age_cte.country,
+	add_avg_age_cte.age,
+	add_avg_age_cte.avg_age
+FROM add_avg_age add_avg_age_cte
 WHERE 1=1
-	AND (avg_age.age > avg_age.avg_age);
+	AND (add_avg_age_cte.age > add_avg_age_cte.avg_age);
 
 	
 	
