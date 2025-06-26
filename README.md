@@ -130,7 +130,7 @@ Additionally, if you would like to run the queries in a database management tool
 4. Browse your device to find the users.db file that was created after running the application to load the data
 5. Test the connection. If drivers are missing, it will prompt you to install them. Once successful, click finish
 
-Below are the results of each of the 5 queries. (More detail can be found in the sql query files).
+Below are my results for each of the 5 queries. (More detail can be found in the sql query files).
 
 1. Query 1. Above-Average Age by Country.
 
