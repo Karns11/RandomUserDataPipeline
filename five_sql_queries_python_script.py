@@ -35,7 +35,7 @@ add_avg_age AS (
 SELECT *
 FROM add_avg_age
 WHERE 1=1
-	AND (age > avg_age)
+	AND (age > avg_age);
 """
 first_result_df = pd.read_sql_query(first_query, con)
 print(first_result_df)
@@ -57,31 +57,28 @@ SELECT
 	num_distinct_first_names.num_dist_first_names,
 	COUNT(DISTINCT num_distinct_first_names.state) AS states_num
 FROM num_distinct_first_names
-GROUP BY num_distinct_first_names.num_dist_first_names
-
+GROUP BY num_distinct_first_names.num_dist_first_names;
 """
 second_result_df = pd.read_sql_query(second_query, con)
 print(second_result_df)
 
 
 
-# 3. Return the top 50 names, age, predicted age, city, state, postal code, and country of the users with the largest gap in absolute value of (age - predicted age)
-print("\n3. Return the top 50 names, age, predicted age, city, state, postal code, and country of the users with the largest gap in absolute value of (age - predicted age). \n")
+# 3. Return number of correct predictions, incorrect predictions, and prediction accuracy % order by highest prediction accuracy % 
+print("\n3. Return number of correct predictions, incorrect predictions, and prediction accuracy % order by highest prediction accuracy %. \n")
 third_query = f"""
-SELECT 
-	users_data.first_name,
-	users_data.last_name,
-	users_data.age,
-	users_data.city,
-	users_data.state,
-	users_data.postcode,
-	users_data.country,
-	users_data.agify_predicted_age,
-	COALESCE(abs(users_data.age - users_data.agify_predicted_age), 0) as predicted_age_differece -- coalesce because we dont want to include nulls and we also dont want to include same predicated age & age, so perfect use case for this
-FROM users_names_data users_data
-WHERE COALESCE(abs(users_data.age - users_data.agify_predicted_age), 0) > 0
-ORDER BY predicted_age_differece DESC
-LIMIT 50
+SELECT
+    country,
+    COUNT(*) AS total_records,
+    SUM(CASE WHEN LOWER(gender) = LOWER(predicted_gender) THEN 1 ELSE 0 END) AS correct_predictions,
+    SUM(CASE WHEN LOWER(gender) != LOWER(predicted_gender) THEN 1 ELSE 0 END) AS incorrect_predictions,
+    ROUND((SUM(CASE WHEN LOWER(gender) = LOWER(predicted_gender) THEN 1 ELSE 0 END) * 100.0) / COUNT(*), 2) AS prediction_accuracy_percent
+FROM users_names_data
+WHERE 1=1
+	AND predicted_gender IS NOT NULL
+	AND gender IS NOT NULL
+GROUP BY country
+ORDER BY prediction_accuracy_percent DESC;
 """
 third_result_df = pd.read_sql_query(third_query, con)
 print(third_result_df)
@@ -112,7 +109,7 @@ SELECT
 	strftime('%m', add_rank_cte.birth_date) as birth_month,
 	add_rank_cte.num
 FROM add_rank add_rank_cte
-WHERE rank_num = 1
+WHERE rank_num = 1;
 """
 fourth_result_df = pd.read_sql_query(fourth_query, con)
 print(fourth_result_df)
@@ -134,7 +131,7 @@ SELECT
 	ranked_age.age AS second_highest_age
 FROM ranked_age ranked_age
 WHERE 1=1
-	AND ranked_age.age_rank = 2
+	AND ranked_age.age_rank = 2;
 """
 fifth_result_df = pd.read_sql_query(fifth_query, con)
 print(fifth_result_df)

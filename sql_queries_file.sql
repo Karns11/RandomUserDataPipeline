@@ -22,7 +22,7 @@ add_avg_age AS (
 SELECT *
 FROM add_avg_age
 WHERE 1=1
-	AND (age > avg_age)
+	AND (age > avg_age);
 
 	
 	
@@ -40,27 +40,25 @@ SELECT
 	num_distinct_first_names.num_dist_first_names,
 	COUNT(DISTINCT num_distinct_first_names.state) AS states_num
 FROM num_distinct_first_names
-GROUP BY num_distinct_first_names.num_dist_first_names
+GROUP BY num_distinct_first_names.num_dist_first_names;
 
 
 
 
--- 3. Return the top 50 names, age, predicted age, city, state, postal code, and country of the users with the largest gap in absolute value of (age - predicted age)
--- This could probably be improved or moved to query 5/6. Maybe top states that have an abs value of pred age - actual age >= 20
-SELECT 
-	users_data.first_name,
-	users_data.last_name,
-	users_data.age,
-	users_data.city,
-	users_data.state,
-	users_data.postcode,
-	users_data.country,
-	users_data.agify_predicted_age,
-	COALESCE(abs(users_data.age - users_data.agify_predicted_age), 0) as predicted_age_differece -- coalesce because we dont want to include nulls and we also dont want to include same predicated age & age, so perfect use case for this
-FROM users_names_data users_data
-WHERE COALESCE(abs(users_data.age - users_data.agify_predicted_age), 0) > 0
-ORDER BY predicted_age_differece DESC
-LIMIT 50
+-- 3. Return number of correct predictions, incorrect predictions, and prediction accuracy % order by highest prediction accuracy %.
+SELECT
+    country,
+    COUNT(*) AS total_records,
+    SUM(CASE WHEN LOWER(gender) = LOWER(predicted_gender) THEN 1 ELSE 0 END) AS correct_predictions,
+    SUM(CASE WHEN LOWER(gender) != LOWER(predicted_gender) THEN 1 ELSE 0 END) AS incorrect_predictions,
+    ROUND((SUM(CASE WHEN LOWER(gender) = LOWER(predicted_gender) THEN 1 ELSE 0 END) * 100.0) / COUNT(*), 2) AS prediction_accuracy_percent
+FROM users_names_data
+WHERE 1=1
+	AND predicted_gender IS NOT NULL
+	AND gender IS NOT NULL
+GROUP BY country
+ORDER BY prediction_accuracy_percent DESC;
+
 
 
 -- 4. Write a query to determine the most common birth month by country. Using at least 1 cte to answer this question.
@@ -84,7 +82,7 @@ SELECT
 	strftime('%m', add_rank_cte.birth_date) as birth_month,
 	add_rank_cte.num
 FROM add_rank add_rank_cte
-WHERE rank_num = 1
+WHERE rank_num = 1;
 
 
 
@@ -102,11 +100,6 @@ SELECT
 	ranked_age.age AS second_highest_age
 FROM ranked_age ranked_age
 WHERE 1=1
-	AND ranked_age.age_rank = 2
+	AND ranked_age.age_rank = 2;
 
 	
-	
-SELECT *
-FROM users_names_data
-
-
