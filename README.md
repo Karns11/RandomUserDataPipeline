@@ -43,9 +43,19 @@ Create a Python application that extracts at least 200 records from the RandomUs
 
 5. Create .env file to store the api key, rather than hard coding it in the application itself.
    within the .env file, you should create a NAMSOR_API_KEY variable.
+
+   easiest way is to run the following command to open vs code and then create the .env file in the project directory.
+
+   ```
+   code .
+   ```
+
+   if you dont have vscode installed, any text editor will do, just make sure the .env file is in the project directory and then do the following:
+
    ```
     NAMSOR_API_KEY=<your api key>
    ```
+
 6. Run the application
    The main Python file is already provided in the repository: "users_data_loader.py"
    To run the application:
@@ -78,7 +88,11 @@ Create a Python application that extracts at least 200 records from the RandomUs
 
 There are a couple of different options when it comes to running the 5 SQL queries on top of the resulting dataset.
 
-The first option is to run the 'five_sql_queries_python_script.py' file that exists in the same project directory. This will run all of the SQL queries I created that I thought yielded interesting results. This script will out put everything in an easy-to-read format in the terminal.
+The first option is to run the 'five_sql_queries_python_script.py' file that exists in the same project directory. This will run all of the SQL queries I created that I thought yielded interesting results. This script will out put everything in an easy-to-read format in the terminal. You can run this command:
+
+```
+python five_sql_queries_python_script.py
+```
 
 Additionally, if you would like to run the queries in a database management tool, like dbeaver, I included the .sql file that contains the queries as well. These can be ran directly within the tool which provides a more familiar workspace. Here are the steps to install dbeaver and hook it up to the database, if needed:
 
