@@ -108,9 +108,15 @@ Continue below for a detailed walkthrough of my solution and my thought process 
 
 ### Solution Summary
 
-The application begins by importing the required libraries, which in this case are: requests, pandas, SQLite3, sys, time, os, and dotenv. I decided to use SQLite to store the data in preparation for the sql analysis portion of the assessment, since it is a very nice lightweight database solution that comes with Python, and we are not working with a large dataset by any means. It also integrates really nicely with DBeaver, which I already have installed on my machine. I also decided to use pandas for any data manipulation and cleaning that I will complete in this project, since I have a great deal of experience with pandas. The requests library obviously will be very helpful when making API calls to the different end points, sys will be used to stop the application if I run into certain situations, time will be used to create delays when looping through datasets and making calls to the namsor api, os and dotenv will be used to obtain the api key from the .env file so I don't have to hard code the value in the application.
+Here, I would like to walk through my entire solution and provide some explanations about some of the decisions I made.
 
-Also, I added the functionality to pass an optional parameter when running the application, so below where I import the libraries is the logic to assign the argument to a variable to be used with limiting the number of responses from the random user api.
+The application begins by importing the required libraries, which in this case are: requests, pandas, SQLite3, sys, time, os, and dotenv. I ultimately decided to use SQLite to store the data in preparation for the sql analysis portion of the assessment. Since it is a very nice lightweight database solution that comes with Python, and we are not working with a large dataset by any means, I figured this would be the perfect soultion. It also integrates really nicely with DBeaver, which I already have installed on my machine. If this were intended for production or larger data pipelines, a more robust RDBMS like Postgres would be preferable.
+
+I also decided to use pandas for any data manipulation and cleaning that I will complete in this project, since I have a great deal of experience with pandas. The requests library obviously will be very helpful when making API calls to the different end points. The sys library will be used to stop the application if I run into certain situations. The time library can potentially be used to create delays when looping through datasets and making calls to the namsor api. The os and dotenv libraries will be used to obtain the api key from the .env file so I don't have to hard code the value in the application. An API key is needed when intereacting with the namsor API.
+
+Also, I added the functionality to pass an optional parameter when running the application, so below where the libraries are being imported, I created the logic to assign the argument to a variable to be used with limiting the number of responses from the random user api. Incorporating this functionality lets me quickly test smaller samples during development or debugging, instead of always retrieving a full dataset. This, in my opinion, is a best-practice that I always try to use.
+
+The last part of this first section includes the logic to load in the env variables. This is best-practice when working with API keys, so I have a great deal of experience with doing so.
 
 ```python
 # import required libraries
@@ -140,15 +146,15 @@ if not API_KEY:
     sys.exit(1)
 ```
 
-Directly after importing the libraries and loading in the api key env variable, I set up my connection to the SQLite database and create the cursor, like so:
+Directly after importing the libraries, assigning the paramater to a variable, and loading in the api key env variable, I set up my connection to the SQLite database and created the cursor, like so:
 
 ```python
-# initialize SQLite connection to a new users database, and create cursor
+# initialize SQLite connection to a new users database, and create cursor to interact with the database later on
 con = sqlite3.connect('users.db')
 cur = con.cursor()
 ```
 
-Then, the application retrieves, by default, exactly 300 random users from the RandomUser API. To make the API calls, I will use Python's request library which makes the process super easy. Here, I will use the requests.get() method to make the get request, I will then use the response to check the status code. if the status code is 200, then I will be good to go ahead and parse the data, and obtain the results. If the response status code is not 200, there is no need to continue running the application. I will print the status code and exit.
+Then, the application retrieves, by default, exactly 300 random users from the RandomUser API. To make the API calls, I will use Python's request library which makes the process very straight forward. Here, I will use the requests.get() method to make the get request, I will then use the response to check the status code. if the status code is 200, then I will be good to go ahead and parse the data, and obtain the results. If the response status code is not 200, there is no need to continue running the application. I will print the status code and exit.
 
 ```python
 # define the random user api, add params to make sure exactly 300 records are returned
@@ -270,7 +276,7 @@ con.commit()
 
 Lastly, I perform some slight data cleaning before saving the data to the table in the database. In the following code, I first check to make sure that the data frame exists and that there is data within it. If the data frame does not exist or is empty, that means there were issues with the additional APIs and the data should not be saved to the database unless it has been enriched with the additional APIs first.
 
-If the data frame does exist and there is data within it, I make sure to convert the birth_date field to a date, rather than a datetime, using pandas, and then replace the data in the database with the new records. I figured this method would be acceptable for this use case since the main objective is to demonstrate Python and SQL analysis skills. However, a perfectly acceptable alternative would be to add a "process_date" field to the dataset here, and then append the data rather than replace it. that will allow the user of the data to isolate users that were loaded on a certain date, for example. In a production system, that might be a good idea.
+If the data frame does exist and there is data within it, I make sure to convert the birth_date field to a date, rather than a datetime, using pandas, and then replace the data in the database with the new records. I figured this method would be acceptable for this use case since the main objective is to demonstrate Python and SQL analysis skills.
 
 ```python
 # slight data cleaning - store birthdate field as date and save dataframe to database

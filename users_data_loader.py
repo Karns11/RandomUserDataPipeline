@@ -46,7 +46,7 @@ if not API_KEY:
     print("Error: api key not found in environment variables. Exiting application.")
     sys.exit(1)
 
-# initialize sqlite connection to a new users database, and create cursor
+# initialize SQLite connection to a new users database, and create cursor to interact with the database later on
 con = sqlite3.connect('users.db')
 cur = con.cursor()
 
