@@ -70,6 +70,7 @@ Create a Python application that extracts at least 200 records from the RandomUs
    SQLite will create a users.db file in the project directory
    The enriched dataset will be stored in a SQLite table named "users_names_data"
    Terminal output will confirm successful API calls and data storage
+   Should take less than a minute to run, depending on how many users are returned
    Successful run will look something like:
 
    ```
