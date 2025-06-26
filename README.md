@@ -9,7 +9,7 @@
 - [How to Run SQL Queries](#how-to-run-sql-queries)
   -This contains information on how to run the sql queries after the main application has be run successfully. The two options are 1) running the sql queries that exist in the 'sql_queries_file.sql' sql file in a database management tool like dbeaver (steps to install dbeaver and connect to the database are below) 2) running the python file in this directory named 'five_sql_queries_python_script.py'. This file contains the exact same queries, but runs them using sqlite3 and pandas. All results are returned as a pandas data frame.
 - [Solution Summary](#solution-summary)
-  -This sections contains a detailed walkthrough of the code I wrote to fetch data from the random users api, use an additional api to enrich the data, and save the data set to a sqlite database.
+  -This section contains a detailed walkthrough of the code I wrote to fetch data from the random users api, use an additional api to enrich the data, and save the data set to a sqlite database.
 
 ### Objective
 
@@ -56,7 +56,7 @@ NOTE: You must obtain a free api key from the namsor api. The steps on how to ob
 
 4. Obtain a free api key from namsor:
 
-   Navigate to https://namsor.app/. From there, create free account. Then, you will have to verify your email address. After that, you can then copy api key from the dashboard section here: https://namsor.app/my-account/.
+   Navigate to https://namsor.app/. From there, create a free account. Then, you will have to verify your email address. After that, you can then copy api key from the dashboard section here: https://namsor.app/my-account/.
 
 5. Create .env file to store the api key, rather than hard-coding it in the application itself.
    Within the .env file, you should create a NAMSOR_API_KEY variable.
