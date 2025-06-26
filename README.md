@@ -24,6 +24,8 @@ I hope you enjoy this solution, and I appreciate the opportunity to work on this
 
 ### How to run the application
 
+NOTE: You must obtain a free api key from the namsor api. The steps on how to obtain that api key are under number 4 below.
+
 1. Project Setup
    Open Powershell (or any terminal) and create a project directory. Then, clone this GitHub repo to your machine:
    ```powershell
