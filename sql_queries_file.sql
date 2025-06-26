@@ -26,14 +26,24 @@ WITH country_avg_age AS (
 
 add_avg_age AS (
 	SELECT 
-		users_data.*,
+		users_data.first_name,
+		users_data.last_name,
+		users_data.gender,
+		users_data.country,
+		users_data.age,
 		avg_age_cte.avg_age
 	FROM users_names_data users_data
 	JOIN country_avg_age avg_age_cte -- more efficient than left join bc we only want records that match
 		ON users_data.country = avg_age_cte.country
 )
 
-SELECT *
+SELECT 
+	avg_age.first_name,
+	avg_age.last_name,
+	avg_age.gender,
+	avg_age.country,
+	avg_age.age,
+	avg_age.avg_age
 FROM add_avg_age avg_age
 WHERE 1=1
 	AND (avg_age.age > avg_age.avg_age);
@@ -84,7 +94,10 @@ ORDER BY prediction_accuracy_percent DESC;
 --This is another type of query that I have lots experience with in real-world projects. A common use case for a query like this is marketing campaigns.
 WITH num_birth_months_per_country AS (
 	SELECT
-		*,
+		users_data.first_name,
+		users_data.last_name,
+		users_data.birth_date,
+		users_data.country,
 --		COUNT(*) OVER (PARTITION BY users_data.country, MONTH(users_data.birth_date)) AS num --Not allowed in sqlite. Is allowed in sqlserver.
 		COUNT(*) OVER (PARTITION BY users_data.country, strftime('%m', users_data.birth_date)) AS num 
 	FROM users_names_data users_data
@@ -111,7 +124,12 @@ WHERE rank_num = 1;
 --I have created several similar "runner-up" queries in real-world scenarios, especially when it comes to determining second place results for marketing campaigns.
 WITH ranked_age AS (
 	SELECT 
-		*,
+		users_data.first_name,
+		users_data.last_name,
+		users_data.birth_date,
+		users_data.country,
+		users_data.nationality,
+		users_data.age,
 		RANK() OVER (PARTITION BY users_data.nationality ORDER BY users_data.age DESC) AS age_rank
 	FROM users_names_data users_data
 	ORDER BY nationality
