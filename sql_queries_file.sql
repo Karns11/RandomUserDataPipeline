@@ -1,5 +1,5 @@
 --These sql queries, through the use of best practices, display my ability to construct complex queries in order to solve unique business problems. 
---Each query was designed based on real-world scenarios I've encountered, with the goal of producing meaningingful insights.
+--Each query was designed based on real-world scenarios I've encountered, with the goal of producing meaningful insights.
 
 --Some best practices used here:
 	--Prioritizing readability through consistent use of aliases.

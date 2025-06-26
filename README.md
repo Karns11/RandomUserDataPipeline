@@ -12,7 +12,7 @@ In this README, there are 3 different sections.
 
 2. 'How to run sql queries'
 
-   -This contains information on how to run the sql queries after the main application has be run successfully. The two options are 1) running the sql queries that exist in the 'sql_queries_file.sql' sql file in a database managaement tool like dbeaver (steps to install dbeaver and connect to the database are below) 2) running the python file in this directory named 'five_sql_queries_python_script.py'. This file contains the exact same queries, but runs them using sqlite3 and pandas. All results are returned as a pandas data frame.
+   -This contains information on how to run the sql queries after the main application has be run successfully. The two options are 1) running the sql queries that exist in the 'sql_queries_file.sql' sql file in a database management tool like dbeaver (steps to install dbeaver and connect to the database are below) 2) running the python file in this directory named 'five_sql_queries_python_script.py'. This file contains the exact same queries, but runs them using sqlite3 and pandas. All results are returned as a pandas data frame.
 
 3. 'Solution Summary'
 
@@ -63,7 +63,7 @@ NOTE: You must obtain a free api key from the namsor api. The steps on how to ob
 
    Navigate to https://namsor.app/. From there, create free account. Then, you will have to verify your email address. After that, you can then copy api key from the dashboard section here: https://namsor.app/my-account/.
 
-5. Create .env file to store the api key, rather than hard coding it in the application itself.
+5. Create .env file to store the api key, rather than hard-coding it in the application itself.
    Within the .env file, you should create a NAMSOR_API_KEY variable.
 
    The easiest way to do that is to run the following command to open vscode and then create the .env file in the project directory.
@@ -162,9 +162,9 @@ Continue below for a detailed walkthrough of my python solution and my thought p
 
 Here, I would like to walk through my entire solution and provide some explanations about some of the decisions I made.
 
-The application begins by importing the required libraries, which in this case are: requests, pandas, SQLite3, sys, time, os, and dotenv. I ultimately decided to use SQLite to store the data in preparation for the sql analysis portion of the assessment. Since it is a very nice lightweight database solution that comes with Python, and we are not working with a large dataset by any means, I figured this would be the perfect soultion. It also integrates really nicely with DBeaver, which I already have installed on my machine. If this were intended for production or larger data pipelines, a more robust RDBMS like Postgres would be preferable.
+The application begins by importing the required libraries, which in this case are: requests, pandas, SQLite3, sys, time, os, and dotenv. I ultimately decided to use SQLite to store the data in preparation for the sql analysis portion of the assessment. Since it is a very nice lightweight database solution that comes with Python, and we are not working with a large dataset by any means, I figured this would be the perfect solution. It also integrates really nicely with DBeaver, which I already have installed on my machine. If this were intended for production or larger data pipelines, a more robust RDBMS like Postgres would be preferable.
 
-I also decided to use pandas for any data manipulation and cleaning that I will complete in this project, since I have a great deal of experience with pandas. The requests library obviously will be very helpful when making API calls to the different end points. The sys library will be used to stop the application if I run into certain situations. The time library can potentially be used to create delays when looping through datasets and making calls to the namsor api. The os and dotenv libraries will be used to obtain the api key from the .env file so I don't have to hard code the value in the application. An API key is needed when intereacting with the namsor API.
+I also decided to use pandas for any data manipulation and cleaning that I will complete in this project, since I have a great deal of experience with pandas. The requests library obviously will be very helpful when making API calls to the different end points. The sys library will be used to stop the application if I run into certain situations. The time library can potentially be used to create delays when looping through datasets and making calls to the namsor api. The os and dotenv libraries will be used to obtain the api key from the .env file so I don't have to hard code the value in the application. An API key is needed when interacting with the namsor API.
 
 Also, I added the functionality to pass an optional parameter when running the application, so below where the libraries are being imported, I created the logic to assign the argument to a variable to be used with limiting the number of responses from the random user api. Incorporating this functionality lets me quickly test smaller samples during development or debugging, instead of always retrieving a full dataset. This, in my opinion, is a best-practice that I always try to use.
 
@@ -198,7 +198,7 @@ if not API_KEY:
     sys.exit(1)
 ```
 
-Directly after importing the libraries, assigning the paramater to a variable, and loading in the api key env variable, I set up my connection to the SQLite database and created the cursor, like so:
+Directly after importing the libraries, assigning the parameter to a variable, and loading in the api key env variable, I set up my connection to the SQLite database and created the cursor, like so:
 
 ```python
 # initialize SQLite connection to a new users database, and create cursor to interact with the database later on
@@ -206,7 +206,7 @@ con = sqlite3.connect('users.db')
 cur = con.cursor()
 ```
 
-Then, the application retrieves, by default, exactly 300 random users from the RandomUser API. To make the API calls, I will use Python's request library which makes the process very straight forward. Here, I will use the requests.get() method to make the get request, I will then use the response to check the status code. if the status code is 200, then I will be good to go ahead and parse the data, and obtain the results. If the response status code is not 200, there is no need to continue running the application. I will print the status code and exit.
+Then, the application retrieves, by default, exactly 300 random users from the RandomUser API. To make the API calls, I will use Python's request library which makes the process very straightforward. Here, I will use the requests.get() method to make the get request, I will then use the response to check the status code. if the status code is 200, then I will be good to go ahead and parse the data, and obtain the results. If the response status code is not 200, there is no need to continue running the application. I will print the status code and exit.
 
 ```python
 # define the random user api, add params to make sure exactly 300 records are returned
