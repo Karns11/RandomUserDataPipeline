@@ -114,10 +114,10 @@ for user in flattened_users_dataset:
     
         enriched_namsor_dataset.append(user)
     else:
-        print(f"Error. namsor get request failed with a status code: {namsor_response.status_code}.")
+        print(f"Error. namsor get request failed with a status code: {namsor_response.status_code}. Exiting loop.\n")
         if namsor_response.status_code == 429:
-            print(f"You've been rate limited.\n")
-            break
+            print(f"You've been rate limited. Exiting loop.\n")
+        break
 
 #convert genderize dataset to pandas dataframe
 enriched_namsor_users_df = pd.DataFrame(enriched_namsor_dataset)
@@ -161,4 +161,4 @@ if enriched_namsor_users_df is not None and not enriched_namsor_users_df.empty:
 
     print("Saved data frame successfully to db.")
 else:
-    print("Data frame is empty. Unable to save to db.")
+    print("Data frame is empty. Unable to save to db. Make sure api calls to namsor are successful.")
