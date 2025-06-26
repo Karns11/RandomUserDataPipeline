@@ -132,14 +132,14 @@ WITH ranked_age AS (
 		users_data.age,
 		RANK() OVER (PARTITION BY users_data.nationality ORDER BY users_data.age DESC) AS age_rank
 	FROM users_names_data users_data
-	ORDER BY nationality
 )
 
 SELECT
-	ranked_age.nationality,
-	ranked_age.age AS second_highest_age
-FROM ranked_age ranked_age
+	DISTINCT
+	ranked_age_cte.nationality,
+	ranked_age_cte.age AS second_highest_age
+FROM ranked_age ranked_age_cte
 WHERE 1=1
-	AND ranked_age.age_rank = 2;
-
+	AND ranked_age_cte.age_rank = 2
+ORDER BY ranked_age_cte.age  DESC;
 	
