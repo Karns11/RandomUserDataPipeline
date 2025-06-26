@@ -3,6 +3,7 @@
 ## Table of Contents
 
 - [Objective](#objective)
+  -This contains information on how to run the sql queries after the main application has be run successfully. The two options are 1) running the sql queries that exist in the 'sql_queries_file.sql' sql file in a database management tool like dbeaver (steps to install dbeaver and connect to the database are below) 2) running the python file in this directory named 'five_sql_queries_python_script.py'. This file contains the exact same queries, but runs them using sqlite3 and pandas. All results are returned as a pandas data frame.
 - [How to Run the Application](#how-to-run-the-application)
 - [How to Run SQL Queries](#how-to-run-sql-queries)
 - [Solution Summary](#solution-summary)
