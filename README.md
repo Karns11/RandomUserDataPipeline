@@ -134,23 +134,23 @@ Below are the results of each of the 5 queries. (More detail can be found in the
 
 1. Query 1. Above-Average Age by Country.
 
-![Query 1](SQL Results Images/Query1.png)
+![Query 1](https://github.com/Karns11/RandomUserDataPipeline/blob/main/SQL%20Results%20Images/Query1.png)
 
 2. Query 2. First name diversity by state. AKA a histogram of distinct first names per state.
 
-![Query 2](SQL Results Images/Query2.png)
+![Query 2](https://github.com/Karns11/RandomUserDataPipeline/blob/main/SQL%20Results%20Images/Query2.png)
 
 3. Query 3. Predicted VS Actual Gender Comparison.
 
-![Query 3](SQL Results Images/Query3.png)
+![Query 3](https://github.com/Karns11/RandomUserDataPipeline/blob/main/SQL%20Results%20Images/Query3.png)
 
 4. Query 4. Most Common Birth Month by Country.
 
-![Query 4](SQL Results Images/Query4.png)
+![Query 4](https://github.com/Karns11/RandomUserDataPipeline/blob/main/SQL%20Results%20Images/Query4.png)
 
 5. Query 5. Second highest age by nationality.
 
-![Query 5](SQL Results Images/Query5.png)
+![Query 5](https://github.com/Karns11/RandomUserDataPipeline/blob/main/SQL%20Results%20Images/Query5.png)
 
 Now, you can open either of the sql files file and run the queries within them! The sql files contain more information about why I chose to create each query, why the results are interesting, and common real-world scenarios where I created similar queries. All of the queries and information is the same within each file. Just two different options for executing the queries.
 
