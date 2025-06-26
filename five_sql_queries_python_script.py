@@ -35,7 +35,7 @@ add_avg_age AS (
 SELECT *
 FROM add_avg_age
 WHERE 1=1
-	AND (age > avg_age);
+	AND (add_avg_age.age > add_avg_age.avg_age);
 """
 first_result_df = pd.read_sql_query(first_query, con)
 print(first_result_df)
@@ -68,16 +68,16 @@ print(second_result_df)
 print("\n3. Return number of correct predictions, incorrect predictions, and prediction accuracy % order by highest prediction accuracy %. \n")
 third_query = f"""
 SELECT
-    country,
+    users_data.country,
     COUNT(*) AS total_records,
-    SUM(CASE WHEN LOWER(gender) = LOWER(predicted_gender) THEN 1 ELSE 0 END) AS correct_predictions,
-    SUM(CASE WHEN LOWER(gender) != LOWER(predicted_gender) THEN 1 ELSE 0 END) AS incorrect_predictions,
-    ROUND((SUM(CASE WHEN LOWER(gender) = LOWER(predicted_gender) THEN 1 ELSE 0 END) * 100.0) / COUNT(*), 2) AS prediction_accuracy_percent
-FROM users_names_data
+    SUM(CASE WHEN LOWER(users_data.gender) = LOWER(users_data.predicted_gender) THEN 1 ELSE 0 END) AS correct_predictions,
+    SUM(CASE WHEN LOWER(users_data.gender) != LOWER(users_data.predicted_gender) THEN 1 ELSE 0 END) AS incorrect_predictions,
+    ROUND((SUM(CASE WHEN LOWER(users_data.gender) = LOWER(users_data.predicted_gender) THEN 1 ELSE 0 END) * 100.0) / COUNT(*), 2) AS prediction_accuracy_percent
+FROM users_names_data users_data
 WHERE 1=1
-	AND predicted_gender IS NOT NULL
-	AND gender IS NOT NULL
-GROUP BY country
+	AND users_data.predicted_gender IS NOT NULL
+	AND users_data.gender IS NOT NULL
+GROUP BY users_data.country
 ORDER BY prediction_accuracy_percent DESC;
 """
 third_result_df = pd.read_sql_query(third_query, con)
@@ -92,8 +92,8 @@ fourth_query = f"""
 WITH num_birth_months_per_country AS (
 	SELECT
 		*,
---		COUNT(*) OVER (PARTITION BY country, MONTH(users_data.birth_date)) AS num --Not allowed in sqlite. Is allowed in sqlserver.
-		COUNT(*) OVER (PARTITION BY country, strftime('%m', birth_date)) AS num 
+--		COUNT(*) OVER (PARTITION BY users_data.country, MONTH(users_data.birth_date)) AS num --Not allowed in sqlite. Is allowed in sqlserver.
+		COUNT(*) OVER (PARTITION BY users_data.country, strftime('%m', users_data.birth_date)) AS num 
 	FROM users_names_data users_data
 ),
 
