@@ -12,8 +12,8 @@ import pandas as pd
 con = sqlite3.connect('users.db')
 cur = con.cursor()
 
-# 1. Return users (all fields) who have an actual age or predicted age (from agify) that is above the average for the users actual country fpr the entire dataset.
-print("\n1. Return users (all fields) who have an actual age or predicted age (from agify) that is above the average for the users actual country fpr the entire dataset. \n")
+# 1. Return users (all fields) who have an actual age that is above the average for the users actual country fpr the entire dataset.
+print("\n1. Return users (all fields) who have an actual age that is above the average for the users actual country fpr the entire dataset. \n")
 first_query = f"""
 WITH country_avg_age AS (
 	SELECT 
@@ -35,7 +35,7 @@ add_avg_age AS (
 SELECT *
 FROM add_avg_age
 WHERE 1=1
-	AND (age > avg_age OR agify_predicted_age > avg_age)
+	AND (age > avg_age)
 """
 first_result_df = pd.read_sql_query(first_query, con)
 print(first_result_df)

@@ -1,7 +1,7 @@
 --Some queries were created with some inspiration from DataLemur. I have spent tons of time on that website practicing SQL skills, and wanted to replicate some of those questions here.
 --Most queries were created with the intention of using a cte or window function, bui not all.
 
--- 1. Return users (all fields) who have an actual age or predicted age (from agify) that is above the average for the users actual country fpr the entire dataset.
+-- 1. Return users (all fields) who have an actual age that is above the average for the users actual country fpr the entire dataset.
 WITH country_avg_age AS (
 	SELECT 
 		users_data.country,
@@ -22,7 +22,7 @@ add_avg_age AS (
 SELECT *
 FROM add_avg_age
 WHERE 1=1
-	AND (age > avg_age OR agify_predicted_age > avg_age)
+	AND (age > avg_age)
 
 	
 	
@@ -103,4 +103,10 @@ SELECT
 FROM ranked_age ranked_age
 WHERE 1=1
 	AND ranked_age.age_rank = 2
+
+	
+	
+SELECT *
+FROM users_names_data
+
 
