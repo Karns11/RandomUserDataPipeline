@@ -4,7 +4,20 @@
 
 Create a Python application that extracts at least 200 records from the RandomUser API, and then use an additional API to infer more information about the names obtained from the RandomUser API. After that, use SQL to perform 5 or more queries on the dataset that might yield interesting results.
 
-### How to run application
+In this README, there are 3 different sections.
+
+1. 'How to run the application'.
+   -This contains information on how to run the application to populate the end database with the random user data.
+2. 'How to run sql queries'.
+   -This contains information on how to run the sql queries after the main application has be run successfully. The two options are 1) running the sql queries that exist in the 'sql_queries_file.sql' sql file in a database managaement tool like dbeaver (steps to install dbeaver and connect to the database are below) 2) running the python file in this directory named 'five_sql_queries_python_script.py'. This file contains the exact same queries, but runs them using sqlite3 and pandas. All results are returned as a pandas data frame.
+3. 'Solution Summary'
+   -This sections contains a detailed walkthrough of the code I wrote to fetch data from the random users api, use an additional api to enrich the data, and save the data set to a sqlite database.
+
+You will be able to find more information about why I chose to create each query, why the results are interesting, and common real-world scenarios where I created similar queries all within the sql files mentioned above.
+
+I hope you enjoy this solution, and I appreciate the opportunity to work on this!
+
+### How to run the application
 
 1. Project Setup
    Open Powershell (or any terminal) and create a project directory. Then, clone this GitHub repo to your machine:
@@ -103,9 +116,9 @@ Additionally, if you would like to run the queries in a database management tool
 4. Browse your device to find the users.db file that was created after running the application to load the data
 5. Test the connection. If drivers are missing, it will prompt you to install them. Once successful, click finish
 
-Now, you can open either of the sql files file and run the queries within it! The sql files contain more information like why I chose to create each query, why the results are interesting, and common real-world scenarios where I created similar queries.
+Now, you can open either of the sql files file and run the queries within them! The sql files contain more information about why I chose to create each query, why the results are interesting, and common real-world scenarios where I created similar queries. All of the queries and information is the same within each file. Just two different options for executing the queries.
 
-Continue below for a detailed walkthrough of my solution and my thought process behind some of the decisions I made.
+Continue below for a detailed walkthrough of my python solution and my thought process behind some of the decisions I made.
 
 ### Solution Summary
 
