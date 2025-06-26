@@ -1,5 +1,12 @@
 # Random User Data Pipeline
 
+## Table of Contents
+
+- [Objective](#objective)
+- [How to Run the Application](#how-to-run-the-application)
+- [How to Run SQL Queries](#how-to-run-sql-queries)
+- [Solution Summary](#solution-summary)
+
 ### Objective
 
 Create a Python application that extracts at least 200 records from the RandomUser API, and then use an additional API to infer more information about the names obtained from the RandomUser API. After that, use SQL to perform 5 or more queries on the dataset that might yield interesting results.
