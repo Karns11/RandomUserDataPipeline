@@ -44,6 +44,7 @@ I hope you enjoy this solution, and I appreciate the opportunity to work on this
    Make sure the (.venv) appears so you know the environment is active
 
 3. Install the required libraries
+
    Make sure pip is updated:
 
    ```powershell
@@ -57,7 +58,8 @@ I hope you enjoy this solution, and I appreciate the opportunity to work on this
    ```
 
 4. Obtain a free api key from namsor:
-   navigate to https://namsor.app/. Create free account, verify email address, then copy api key.
+
+   Navigate to https://namsor.app/. From there, create free account. Then, you will have to verify your email address. After that, you can then copy api key from the dashboard section here: https://namsor.app/my-account/.
 
 5. Create .env file to store the api key, rather than hard coding it in the application itself.
    Within the .env file, you should create a NAMSOR_API_KEY variable.
@@ -68,7 +70,7 @@ I hope you enjoy this solution, and I appreciate the opportunity to work on this
    code .
    ```
 
-   If you don't have vscode installed, any text editor will do, just make sure the .env file is in the project directory and then do the following:
+   If you don't have vscode installed, any text editor will do, just make sure the .env file is in the project directory, and then enter the following:
 
    ```
     NAMSOR_API_KEY=<your api key>
@@ -85,10 +87,15 @@ I hope you enjoy this solution, and I appreciate the opportunity to work on this
     python users_data_loader.py 50
    ```
 7. Expected Application Outcome
+
    SQLite will create a users.db file in the project directory
+
    The enriched dataset will be stored in a SQLite table named "users_names_data"
+
    Terminal output will confirm successful API calls and data storage
+
    Should take less than a minute to run, depending on how many users are returned
+
    Successful run will look something like:
 
    ```
@@ -102,6 +109,8 @@ I hope you enjoy this solution, and I appreciate the opportunity to work on this
 
     Saved data frame successfully to db.
    ```
+
+   NOTE: when running the pipeline for 200 or more users, expect the process to finish successfully after about 2 minutes.
 
 ### How to run sql queries
 
@@ -120,6 +129,28 @@ Additionally, if you would like to run the queries in a database management tool
 3. Once the application is open, click on the ‘New Database Connection’ button from the top menu. In the list of databases, select SQLite, then click next
 4. Browse your device to find the users.db file that was created after running the application to load the data
 5. Test the connection. If drivers are missing, it will prompt you to install them. Once successful, click finish
+
+Below are the results of each of the 5 queries. (More detail can be found in the sql query files).
+
+1. Query 1. Above-Average Age by Country.
+
+![Query 1](SQL Results Images/Query1.png)
+
+2. Query 2. First name diversity by state. AKA a histogram of distinct first names per state.
+
+![Query 2](SQL Results Images/Query2.png)
+
+3. Query 3. Predicted VS Actual Gender Comparison.
+
+![Query 3](SQL Results Images/Query3.png)
+
+4. Query 4. Most Common Birth Month by Country.
+
+![Query 4](SQL Results Images/Query4.png)
+
+5. Query 5. Second highest age by nationality.
+
+![Query 5](SQL Results Images/Query5.png)
 
 Now, you can open either of the sql files file and run the queries within them! The sql files contain more information about why I chose to create each query, why the results are interesting, and common real-world scenarios where I created similar queries. All of the queries and information is the same within each file. Just two different options for executing the queries.
 
