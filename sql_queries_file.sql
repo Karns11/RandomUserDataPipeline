@@ -66,7 +66,8 @@ SELECT
 	num_distinct_first_names.num_dist_first_names,
 	COUNT(DISTINCT num_distinct_first_names.state) AS states_num
 FROM num_distinct_first_names
-GROUP BY num_distinct_first_names.num_dist_first_names;
+GROUP BY num_distinct_first_names.num_dist_first_names
+ORDER BY num_distinct_first_names.num_dist_first_names;
 
 
 
@@ -115,7 +116,8 @@ SELECT
 	strftime('%m', add_rank_cte.birth_date) as birth_month,
 	add_rank_cte.num
 FROM add_rank add_rank_cte
-WHERE rank_num = 1;
+WHERE rank_num = 1
+ORDER BY add_rank_cte.num;
 
 
 
