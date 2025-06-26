@@ -1,7 +1,21 @@
---Some queries were created with some inspiration from DataLemur. I have spent tons of time on that website practicing SQL skills, and wanted to replicate some of those questions here.
---Most queries were created with the intention of using a cte or window function, bui not all.
+--These sql queries, through the use of best practices, display my ability to construct complex queries in order to solve unique business problems. 
+--Each query was designed based on real-world scenarios I've encountered, with the goal of producing meaningingful insights.
 
--- 1. Return users (all fields) who have an actual age that is above the average for the users actual country fpr the entire dataset.
+--Some best practices used here:
+	--Prioritizing readability through consistent use of aliases.
+		--Every table is aliased with a descriptive name, and every query includes qualified column referencing. I know, from experience, that this is key when creating queries.
+	--Consistent Formatting.
+		--Every SQL keyword is in uppercase while every non-keyword is in lowercase. This is consistent throughout each query.
+	--Prioritizes inner joins over outer joins. 
+		--This is an optimization technique that I have learned over time. 
+		--If you expect the data to be there in a join, always use an inner join to reduce the number of records being returned.
+	--Use of CTEs for breaking down problems into smaller steps, logically
+
+
+
+-- 1. Above-Average Age by Country,
+--Why this is interesting: This query highlights users that are outliers in terms of their age compared to the average age for their country.
+--This type of analysis is a common one when it comes to demographic analyses, and I have applied similar logic in real-world projects.
 WITH country_avg_age AS (
 	SELECT 
 		users_data.country,
@@ -20,14 +34,16 @@ add_avg_age AS (
 )
 
 SELECT *
-FROM add_avg_age
+FROM add_avg_age avg_age
 WHERE 1=1
-	AND (add_avg_age.age > add_avg_age.avg_age);
+	AND (avg_age.age > avg_age.avg_age);
 
 	
 	
 
--- 2. Return a histogram of distinct first names per state. AKA group the states by number of distinct names
+-- 2. First name diversity by state. AKA a histogram of distinct first names per state.
+--Why this is interesting: Allows me to see naming diversity across states. These types of queries can be used to support marketing segmentation efforts, for example. 
+--I obtained inspiration to create this query from Data Lemur. I have spent tons of time on that website solving queries and I wanted to recreate one of those queries in this context.
 WITH num_distinct_first_names AS (
 	SELECT 
 		users_data.state,
@@ -45,7 +61,9 @@ GROUP BY num_distinct_first_names.num_dist_first_names;
 
 
 
--- 3. Return number of correct predictions, incorrect predictions, and prediction accuracy % order by highest prediction accuracy %.
+-- 3. Predicted VS Actual Gender Comparison
+--Why this is interesting: This query examines the result of the namsor api. I wanted to make sure I include a query that displays an analysis of the namsor api.
+--Here we can see the # of correct and incorrect predictions, along with the prediction accuracy broken out my country
 SELECT
     users_data.country,
     COUNT(*) AS total_records,
@@ -61,7 +79,9 @@ ORDER BY prediction_accuracy_percent DESC;
 
 
 
--- 4. Write a query to determine the most common birth month by country. Using at least 1 cte to answer this question.
+-- 4. Most Common Birth Month by Country
+--Why this is interesting: Identify patterns in birth month by country. This uses a window function to solve the problem and I provide a couple of different options depending on DMS in use.
+--This is another type of query that I have lots experience with in real-world projects. A common use case for a query like this is marketing campaigns.
 WITH num_birth_months_per_country AS (
 	SELECT
 		*,
@@ -86,7 +106,9 @@ WHERE rank_num = 1;
 
 
 
--- 5. Write a query to return the 2rd highest age (maybe could do predicted age with a full dataset) by nationality
+-- 5. Second highest age by nationality
+--Why this is interesting: This type of query demonstrates my advanced SQL knowledge when it comes to ranking logic and window functions. 
+--I have created several similar "runner-up" queries in real-world scenarios, especially when it comes to determining second place results for marketing campaigns.
 WITH ranked_age AS (
 	SELECT 
 		*,

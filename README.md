@@ -103,7 +103,7 @@ Additionally, if you would like to run the queries in a database management tool
 4. Browse your device to find the users.db file that was created after running the application to load the data
 5. Test the connection. If drivers are missing, it will prompt you to install them. Once successful, click finish
 
-Now, you can open this sql file and run the queries within it! The sql files contain more information like why I chose to create each query, etc.
+Now, you can open either of the sql files file and run the queries within it! The sql files contain more information like why I chose to create each query, why the results are interesting, and common real-world scenarios where I created similar queries.
 
 Continue below for a detailed walkthrough of my solution and my thought process behind some of the decisions I made.
 
