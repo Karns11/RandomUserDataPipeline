@@ -114,7 +114,7 @@ for user in flattened_users_dataset:
     
         enriched_namsor_dataset.append(user)
     else:
-        print(f"Error. Genderize get request failed with a status code: {namsor_response.status_code}.")
+        print(f"Error. namsor get request failed with a status code: {namsor_response.status_code}.")
         if namsor_response.status_code == 429:
             print(f"You've been rate limited.\n")
             break
