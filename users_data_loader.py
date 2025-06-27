@@ -8,6 +8,8 @@ Libraries used:
     -sqlite3 
     -sys
     -time
+    -os
+    -dotenv 
 
 -Import required libraries
 -Set up sqlite database connection
