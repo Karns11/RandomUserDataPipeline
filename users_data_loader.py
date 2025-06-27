@@ -19,7 +19,7 @@ Libraries used:
 -With successful response, flatten the json object anbd retain only relevant fields
 -Send first and last name to namsor api to getredicted gender. Use this to compare to actual gender in SQL queries later on.
 -Create sql table in sqlite database 
--Perform slight data cleaning, and load data into sqlite table
+-Perform slight data cleaning, and load data into sqlite table. Always overwriting the table.
 """
 
 # import required libraries
