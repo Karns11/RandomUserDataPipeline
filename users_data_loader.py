@@ -29,6 +29,8 @@ import time
 import os
 from dotenv import load_dotenv
 
+start_time = time.time()
+
 # Get parameter from command line, default to 300 and it cannot be more than 300. Determines how many users to get data for.
 if len(sys.argv) > 1:
     int_argument = int(sys.argv[1])
@@ -63,7 +65,7 @@ if random_user_response.status_code == 200:
     json_data = random_user_response.json()
     json_results = json_data['results']
 
-    print(f"Successfully obtained {num_users} random users\n")
+    print(f"Successfully obtained {len(json_results)} random users\n")
 else:
     print(f"Error. Random user api get request failed with a status code: {random_user_response.status_code}. Exiting application.\n")
     sys.exit(1)
@@ -103,26 +105,34 @@ for user in flattened_users_dataset:
     namsor_headers = {
         "X-API-KEY": API_KEY
     }
-    namsor_response = requests.get(namsor_url, headers=namsor_headers)
 
-    if namsor_response.status_code == 200:
-        namsor_json_data = namsor_response.json()
-    
-        user['predicted_gender'] = namsor_json_data['likelyGender']
-        user['predicted_gender_score'] = namsor_json_data['score']
-        user['predicted_gender_probabilityCalibrated'] = namsor_json_data['probabilityCalibrated']
-    
-        enriched_namsor_dataset.append(user)
-    else:
-        print(f"Error. namsor get request failed with a status code: {namsor_response.status_code}. Exiting loop.\n")
-        if namsor_response.status_code == 429:
-            print(f"You've been rate limited. Exiting loop.\n")
-        break
+    try:
+        namsor_response = requests.get(namsor_url, headers=namsor_headers, timeout=10)
+
+        if namsor_response.status_code == 200:
+            namsor_json_data = namsor_response.json()
+        
+            user['predicted_gender'] = namsor_json_data['likelyGender']
+            user['predicted_gender_score'] = namsor_json_data['score']
+            user['predicted_gender_probabilityCalibrated'] = namsor_json_data['probabilityCalibrated']
+        
+            enriched_namsor_dataset.append(user)
+        else:
+            print(f"Error. namsor get request failed with a status code: {namsor_response.status_code}. Exiting application.\n")
+            if namsor_response.status_code == 429:
+                print(f"You've been rate limited. Exiting application.\n")
+            sys.exit(1)
+    except requests.exceptions.Timeout:
+        print(f"timeout error for user: {user['first_name']} {user['last_name']}. Exiting application.\n")
+        sys.exit(1)
+    except requests.exceptions.RequestException as e:
+        print(f"Request failed for user: {user['first_name']} {user['last_name']}. Exiting application.\n")
+        sys.exit(1)
 
 #convert genderize dataset to pandas dataframe
 enriched_namsor_users_df = pd.DataFrame(enriched_namsor_dataset)
 
-print(f"Total rows in final users df: {len(enriched_namsor_users_df)}\n")
+print(f"Finished making namsor api calls. Total rows in final users df: {len(enriched_namsor_users_df)}\n")
 
 # Create table in sqlite database if it doesn't already exist
 cur.execute("""
@@ -159,6 +169,9 @@ if enriched_namsor_users_df is not None and not enriched_namsor_users_df.empty:
     # always overwrite the raw DataFrame to a table called 'users_names_data'
     enriched_namsor_users_df.to_sql('users_names_data', con, if_exists='replace', index=False)
 
-    print("Saved data frame successfully to db.")
+    print(f"Saved data frame successfully to db. Rows = {enriched_namsor_users_df.shape[0]} & columns = {enriched_namsor_users_df.shape[1]}.\n")
 else:
-    print("Data frame is empty. Unable to save to db. Make sure api calls to namsor are successful.")
+    print("Data frame is empty. Unable to save to db. Make sure api calls to namsor are successful.\n")
+
+end_time = time.time()
+print(f"Total time = {round(end_time - start_time, 2)} seconds\n")

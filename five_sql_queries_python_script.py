@@ -54,11 +54,12 @@ SELECT
 	add_avg_age_cte.gender,
 	add_avg_age_cte.country,
 	add_avg_age_cte.age,
-	add_avg_age_cte.avg_age
+	add_avg_age_cte.avg_age,
+	abs(add_avg_age_cte.age - add_avg_age_cte.avg_age) AS difference
 FROM add_avg_age add_avg_age_cte
 WHERE 1=1
-	AND (add_avg_age_cte.age > add_avg_age_cte.avg_age);
-
+	AND (add_avg_age_cte.age > add_avg_age_cte.avg_age)
+ORDER BY difference;
 """
 first_result_df = pd.read_sql_query(first_query, con)
 print(first_result_df)

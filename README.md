@@ -102,12 +102,14 @@ NOTE: You must obtain a free api key from the namsor api. The steps on how to ob
 
     Making api calls to namsor api...
 
-    Total rows in final users df: 200
+    Finished making namsor api calls. Total rows in final users df: 200
 
-    Saved data frame successfully to db.
+    Saved data frame successfully to db. Rows = 200 & columns = 20.
+
+    Total time = 93.14 seconds
    ```
 
-   NOTE: when running the pipeline for 200 or more users, expect the process to finish successfully after about 2 minutes.
+   NOTE: when running the pipeline for 200 users, expect the process to finish successfully after about 92 seconds.
 
 ### How to run sql queries
 
@@ -159,7 +161,7 @@ Here, I would like to walk through my entire solution and provide some explanati
 
 The application begins by importing the required libraries, which in this case are: requests, pandas, SQLite3, sys, time, os, and dotenv. I ultimately decided to use SQLite to store the data in preparation for the sql analysis portion of the assessment. Since it is a very nice lightweight database solution that comes with Python, and we are not working with a large dataset by any means, I figured this would be the perfect solution. It also integrates really nicely with DBeaver, which I already have installed on my machine. If this were intended for production or larger data pipelines, a more robust RDBMS like Postgres would be preferable.
 
-I also decided to use pandas for any data manipulation and cleaning that I will complete in this project, since I have a great deal of experience with pandas. The requests library obviously will be very helpful when making API calls to the different end points. The sys library will be used to stop the application if I run into certain situations. The time library can potentially be used to create delays when looping through datasets and making calls to the namsor api. The os and dotenv libraries will be used to obtain the api key from the .env file so I don't have to hard code the value in the application. An API key is needed when interacting with the namsor API.
+I also decided to use pandas for any data manipulation and cleaning that I will complete in this project, since I have a great deal of experience with pandas. The requests library obviously will be very helpful when making API calls to the different end points. The sys library will be used to stop the application if I run into certain situations. The time library will be used to time how long the application takes from start to finish, it can also potentially be used to create delays when looping through datasets and making calls to the namsor api, but there is no need do that at this time. The os and dotenv libraries will be used to obtain the api key from the .env file so I don't have to hard code the value in the application. An API key is needed when interacting with the namsor API.
 
 Also, I added the functionality to pass an optional parameter when running the application, so below where the libraries are being imported, I created the logic to assign the argument to a variable to be used with limiting the number of responses from the random user api. Incorporating this functionality lets me quickly test smaller samples during development or debugging, instead of always retrieving a full dataset. This, in my opinion, is a best-practice that I always try to use.
 
@@ -174,6 +176,8 @@ import sys
 import time
 import os
 from dotenv import load_dotenv
+
+start_time = time.time()
 
 # Get parameter from command line, default to 300 and it cannot be more than 300. Determines how many users to get data for.
 if len(sys.argv) > 1:
@@ -217,7 +221,7 @@ if random_user_response.status_code == 200:
     json_data = random_user_response.json()
     json_results = json_data['results']
 
-    print(f"Successfully obtained {num_users} random users\n")
+    print(f"Successfully obtained {len(json_results)} random users\n")
 else:
     print(f"Error. Random user api get request failed with a status code: {random_user_response.status_code}. Exiting application.\n")
     sys.exit(1)
@@ -254,6 +258,8 @@ for user in json_results:
 
 Next, I will pass each of the names in the resulting dataset to the namsor api. Namsor has an api endpoint to genderize a given first and last name. So, I will loop through each of the users, pass the first and last name as parameters to genderize the names, and then retain a handful of interesting returned fields to be used for analysis later on. I made the decision to not use the following APIs: https://nationalize.io/, https://genderize.io/, https://agify.io/, since they have very strict rate limits (only 100 per day for all). As a result, I came across the Namsor api which is very similar but has a more generous free tier (as long as you create a free account and include the api key as a header in the request).
 
+I also decided to implement try/except blocks when making the api calls to the namsor api. I decided to do this because the namsor api does still have rate limits, and when I was developing this, I was running into timeout erros. So, in an attempt to handle those timeout errors gracefully, I decided to implement try/except logic, and then log the errors and exit the application if they are encountered. The reason I am exiting the application as soon as an error or non-200 response is encountered (sys.exit(1)), is because the requirements state that you must use an additional api to infer more details about the names. So, if every name is not passed to the namsor api to predict its gender, then I do not want to save the dataframe to the database.
+
 So, here is how I handled that logic:
 
 ```python
@@ -265,26 +271,34 @@ for user in flattened_users_dataset:
     namsor_headers = {
         "X-API-KEY": API_KEY
     }
-    namsor_response = requests.get(namsor_url, headers=namsor_headers)
 
-    if namsor_response.status_code == 200:
-        namsor_json_data = namsor_response.json()
+    try:
+        namsor_response = requests.get(namsor_url, headers=namsor_headers, timeout=10)
 
-        user['predicted_gender'] = namsor_json_data['likelyGender']
-        user['predicted_gender_score'] = namsor_json_data['score']
-        user['predicted_gender_probabilityCalibrated'] = namsor_json_data['probabilityCalibrated']
+        if namsor_response.status_code == 200:
+            namsor_json_data = namsor_response.json()
 
-        enriched_namsor_dataset.append(user)
-    else:
-        print(f"Error. Genderize get request failed with a status code: {namsor_response.status_code}.")
-        if namsor_response.status_code == 429:
-            print(f"You've been rate limited.\n")
-            break
+            user['predicted_gender'] = namsor_json_data['likelyGender']
+            user['predicted_gender_score'] = namsor_json_data['score']
+            user['predicted_gender_probabilityCalibrated'] = namsor_json_data['probabilityCalibrated']
+
+            enriched_namsor_dataset.append(user)
+        else:
+            print(f"Error. namsor get request failed with a status code: {namsor_response.status_code}. Exiting application.\n")
+            if namsor_response.status_code == 429:
+                print(f"You've been rate limited. Exiting application.\n")
+            sys.exit(1)
+    except requests.exceptions.Timeout:
+        print(f"timeout error for user: {user['first_name']} {user['last_name']}. Exiting application.\n")
+        sys.exit(1)
+    except requests.exceptions.RequestException as e:
+        print(f"Request failed for user: {user['first_name']} {user['last_name']}. Exiting application.\n")
+        sys.exit(1)
 
 #convert genderize dataset to pandas dataframe
 enriched_namsor_users_df = pd.DataFrame(enriched_namsor_dataset)
 
-print(f"Total rows in final users df: {len(enriched_namsor_users_df)}\n")
+print(f"Finished making namsor api calls. Total rows in final users df: {len(enriched_namsor_users_df)}\n")
 ```
 
 Sending an API key as a header with each request is a type of authentication that I am super familiar with. I have used a ton of APIs that require this type of authentication, so it was really simple to include that logic.
@@ -325,6 +339,8 @@ Lastly, I perform some slight data cleaning before saving the data to the table 
 
 If the data frame does exist and there is data within it, I make sure to convert the birth_date field to a date, rather than a datetime, using pandas, and then replace the data in the database with the new records. I figured this method would be acceptable for this use case since the main objective is to demonstrate Python and SQL analysis skills.
 
+Also, I always like to include a log/print statement to give insight into exactly how long the entire program took to run.
+
 ```python
 # slight data cleaning - store birthdate field as date and save dataframe to database
 if enriched_namsor_users_df is not None and not enriched_namsor_users_df.empty:
@@ -333,7 +349,10 @@ if enriched_namsor_users_df is not None and not enriched_namsor_users_df.empty:
     # always overwrite the raw DataFrame to a table called 'users_names_data'
     enriched_namsor_users_df.to_sql('users_names_data', con, if_exists='replace', index=False)
 
-    print("Saved data frame successfully to db.")
+    print(f"Saved data frame successfully to db. Rows = {enriched_namsor_users_df.shape[0]} & columns = {enriched_namsor_users_df.shape[1]}.\n")
 else:
-    print("Data frame is empty. Unable to save to db.")
+    print("Data frame is empty. Unable to save to db. Make sure api calls to namsor are successful.\n")
+
+end_time = time.time()
+print(f"Total time = {round(end_time - start_time, 2)} seconds\n")
 ```
