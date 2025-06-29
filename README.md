@@ -47,6 +47,10 @@ NOTE: You must obtain a free api key from the namsor api. The steps on how to ob
    ```powershell
     python.exe -m pip install --upgrade pip
    ```
+   On mac/linux:
+   ```
+    python3 -m pip install --upgrade pip
+   ```
 
    Then, install the required dependencies for the application
 
@@ -54,11 +58,11 @@ NOTE: You must obtain a free api key from the namsor api. The steps on how to ob
     pip install requests pandas python-dotenv
    ```
 
-4. Obtain a free api key from namsor:
+5. Obtain a free api key from namsor:
 
    Navigate to https://namsor.app/. From there, create a free account. Then, you will have to verify your email address. After that, you can then copy api key from the dashboard section here: https://namsor.app/my-account/.
 
-5. Create .env file to store the api key, rather than hard-coding it in the application itself.
+6. Create .env file to store the api key, rather than hard-coding it in the application itself.
    Within the .env file, you should create a NAMSOR_API_KEY variable.
 
    The easiest way to do that is to run the following command to open vscode and then create the .env file in the project directory.
@@ -73,7 +77,7 @@ NOTE: You must obtain a free api key from the namsor api. The steps on how to ob
     NAMSOR_API_KEY=<your api key>
    ```
 
-6. Run the application
+7. Run the application
    The main Python file is already provided in the repository: "users_data_loader.py"
    To run the application:
    ```powershell
@@ -83,7 +87,7 @@ NOTE: You must obtain a free api key from the namsor api. The steps on how to ob
    ```powershell
     python users_data_loader.py 50
    ```
-7. Expected Application Outcome
+8. Expected Application Outcome
 
    SQLite will create a users.db file in the project directory
 
